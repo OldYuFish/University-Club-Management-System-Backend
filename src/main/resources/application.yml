@@ -1,1 +1,44 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 60
 
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql:///club_system?serverTimezone=UTC
+      username: root
+      password: 123456
+  profiles:
+    active: dev
+  application:
+    name: service-core
+  data:
+    redis:
+      database: 0
+      host: 127.0.0.1
+      port: 6379
+      password:
+      jedis:
+        pool:
+          max-active: 8
+          max-wait: -1
+          max-idle: 8
+          min-idle: 0
+      timeout: 10000
+  jackson:
+    time-zone: GMT+8
+
+logging:
+  level:
+    com:
+      springboot: error
