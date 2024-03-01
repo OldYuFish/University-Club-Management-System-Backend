@@ -17,5 +17,6 @@ public class LoginInfo {
     private String teacherNumber;
     private String phone;
     private String email;
+    private Integer isDelete;
     private Integer roleId;
 }
