@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+!**/src/main/resoures/id_rsa_private_key.key
+!**/src/main/resoures/id_rsa_public_key.pub
