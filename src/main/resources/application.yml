@@ -48,3 +48,7 @@ rsa:
     privateKeyFile: ./src/main/resources/id_rsa_private_key.key
     publicKeyFile: ./src/main/resources/id_rsa_public_key.pub
     secret: (EMOK:)_$^11244^%$_(IS:)_@@++--(COOL:)_++++_.sds_(GUY:)
+
+file:
+  url: /files/**
+  host: http://127.0.0.1:${server.port}/files/
