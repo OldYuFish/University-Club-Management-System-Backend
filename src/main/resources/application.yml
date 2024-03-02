@@ -13,11 +13,10 @@ mybatis-plus:
 
 spring:
   datasource:
-    druid:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql:///club_system?serverTimezone=UTC
-      username: root
-      password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///club_system?serverTimezone=UTC&characterEncoding=utf-8
+    username: root
+    password: 123456
   profiles:
     active: dev
   application:
