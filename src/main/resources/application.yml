@@ -17,6 +17,7 @@ spring:
     url: jdbc:mysql:///club_system?serverTimezone=UTC&characterEncoding=utf-8
     username: root
     password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
   profiles:
     active: dev
   application:
