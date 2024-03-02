@@ -18,11 +18,11 @@ public class LoginUser implements UserDetails {
 
     private LoginInfo user;
 
-    String permission;
+    String roleName;
 
-    public LoginUser(LoginInfo user, String permission) {
+    public LoginUser(LoginInfo user, String roleName) {
         this.user = user;
-        this.permission = permission;
+        this.roleName = roleName;
     }
 
     @JSONField(serialize = false)
@@ -33,7 +33,7 @@ public class LoginUser implements UserDetails {
 
         if (authorities != null) return Collections.singleton(authorities);
 
-        authorities = new SimpleGrantedAuthority(permission);
+        authorities = new SimpleGrantedAuthority(roleName);
 
         return Collections.singleton(authorities);
     }
