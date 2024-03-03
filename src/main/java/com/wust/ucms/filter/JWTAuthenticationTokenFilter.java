@@ -1,6 +1,5 @@
 package com.wust.ucms.filter;
 
-import com.wust.ucms.pojo.LoginUser;
 import com.wust.ucms.pojo.RSAKeyProperties;
 import com.wust.ucms.utils.JWTUtil;
 import com.wust.ucms.utils.RedisCache;
@@ -10,8 +9,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -44,15 +41,9 @@ public class JWTAuthenticationTokenFilter extends OncePerRequestFilter {
             throw new RuntimeException("Token is illegal");
         }
 
-        LoginUser loginUser = redisCache.getCacheObject("login:" + userId);
-        if (Objects.isNull(loginUser)) {
+        if (Objects.isNull(redisCache.getCacheObject("login:" + userId))) {
             throw new RuntimeException("The user is not login");
         }
-
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
-
-        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
         filterChain.doFilter(request, response);
     }
