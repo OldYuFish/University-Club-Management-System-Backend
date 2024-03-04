@@ -40,8 +40,8 @@ public class ActivityInfo {
     private String summarize;
     private Integer statusCode;
     private Integer useFund;
+    private String approvalComment;
     private Integer clubId;
-    private Integer fundId;
     @TableField(exist = false)
     private String clubName;
     @TableField(exist = false)

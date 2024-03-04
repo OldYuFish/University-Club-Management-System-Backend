@@ -19,8 +19,7 @@ public class ActivityController {
     @Autowired
     ActivityInfoServiceImpl activity;
 
-    @PostMapping("/create")
-    public Result createActivity(@RequestBody ActivityInfo activityInfo) {
+    private static Integer paramsException(ActivityInfo activityInfo) {
         try {
             if (activityInfo.getTitle() == null || activityInfo.getTitle().isEmpty() ||
                     activityInfo.getType() == null || activityInfo.getType().isEmpty() ||
@@ -31,7 +30,7 @@ public class ActivityController {
                     activityInfo.getClubId() == null
             ) throw new Exception("缺少参数！");
         } catch (Exception e) {
-            return new Result(-20001);
+            return -20001;
         }
 
         try {
@@ -44,8 +43,16 @@ public class ActivityController {
                     activityInfo.getAddress().length() > 36
             ) throw new Exception("参数格式错误！");
         } catch (Exception e) {
-            return new Result(-20002);
+            return -20002;
         }
+
+        return 0;
+    }
+
+    @PostMapping("/create")
+    public Result createActivity(@RequestBody ActivityInfo activityInfo) {
+        Integer code = paramsException(activityInfo);
+        if (code != 0) return new Result(code);
 
         try {
             if ((activityInfo.getUseFund() == 0 && !Objects.equals(activityInfo.getBudget(), BigDecimal.ZERO)) ||
@@ -54,8 +61,9 @@ public class ActivityController {
                     !Objects.equals(activityInfo.getOutput(), BigDecimal.ZERO) ||
                     (activityInfo.getRealNumber() != null && activityInfo.getRealNumber() != 0) ||
                     (activityInfo.getSummarize() != null && activityInfo.getSummarize().isEmpty()) ||
+                    (activityInfo.getApprovalComment() != null && activityInfo.getApprovalComment().isEmpty()) ||
                     (activityInfo.getShouldApply() == 0 &&
-                            (activityInfo.getApplicationStartTime() != null || activityInfo.getApplicationEndTime() != null)) ||
+                            (activityInfo.getApplicationStartTime() != null && activityInfo.getApplicationEndTime() != null)) ||
                     (activityInfo.getShouldApply() == 1 &&
                             (activityInfo.getApplicationStartTime() == null || activityInfo.getApplicationEndTime() == null))
             ) throw new Exception("参数逻辑错误！");
@@ -63,7 +71,7 @@ public class ActivityController {
             return new Result(-20006);
         }
 
-        Integer code = activity.createActivityInfo(activityInfo);
+        code = activity.createActivityInfo(activityInfo);
         if (code <= 0) return new Result(code);
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
@@ -73,17 +81,49 @@ public class ActivityController {
 
     @PostMapping("/delete")
     public Result deleteActivity(@RequestBody ActivityInfo activityInfo) {
-        return null;
+        Integer id = activityInfo.getId();
+        try {
+            if (id == null || id <= 0) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        Integer code = activity.deleteActivityInfo(id);
+        return new Result(code);
     }
 
     @PostMapping("/update")
     public Result updateActivity(@RequestBody ActivityInfo activityInfo) {
-        return null;
-    }
+        Integer code = paramsException(activityInfo);
+        if (code != 0) return new Result(code);
 
-    @PostMapping("/submit")
-    public Result submitActivity(@RequestBody ActivityInfo activityInfo) {
-        return null;
+        try {
+            if (activityInfo.getId() == null || activityInfo.getId() <= 0 ||
+                    (activityInfo.getUseFund() == 0 && !Objects.equals(activityInfo.getBudget(), BigDecimal.ZERO)) ||
+                    (activityInfo.getUseFund() != 0 && Objects.equals(activityInfo.getBudget(), BigDecimal.ZERO)) ||
+                    (activityInfo.getStatusCode() != 3 &&
+                            (!Objects.equals(activityInfo.getOutput(), BigDecimal.ZERO) ||
+                                    (activityInfo.getRealNumber() != null && activityInfo.getRealNumber() != 0) ||
+                                    (activityInfo.getSummarize() != null && activityInfo.getSummarize().isEmpty()))) ||
+                    (activityInfo.getStatusCode() !=2 &&
+                            (activityInfo.getApprovalComment() != null && activityInfo.getApprovalComment().isEmpty())) ||
+                    (activityInfo.getStatusCode() ==2 &&
+                            (activityInfo.getApprovalComment() == null || !activityInfo.getApprovalComment().isEmpty())) ||
+                    (activityInfo.getShouldApply() == 0 &&
+                            (activityInfo.getApplicationStartTime() != null && activityInfo.getApplicationEndTime() != null)) ||
+                    (activityInfo.getShouldApply() == 1 &&
+                            (activityInfo.getApplicationStartTime() == null || activityInfo.getApplicationEndTime() == null))
+            ) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        code = activity.updateActivityInfo(activityInfo);
+        if (code <= 0) return new Result(code);
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", code);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/approval")

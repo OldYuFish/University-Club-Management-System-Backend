@@ -62,6 +62,7 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
         String summarize = activityInfo.getSummarize();
         Integer statusCode = activityInfo.getStatusCode();
         Integer useFund = activityInfo.getUseFund();
+        String approvalComment = activityInfo.getApprovalComment();
         Integer clubId = activityInfo.getClubId();
 
         activityInfo = activity.selectById(activityInfo.getId());
@@ -83,6 +84,7 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
         activityInfo.setSummarize(summarize);
         activityInfo.setStatusCode(statusCode);
         activityInfo.setUseFund(useFund);
+        activityInfo.setApprovalComment(approvalComment);
         activityInfo.setClubId(clubId);
 
         int flag = activity.updateById(activityInfo);
