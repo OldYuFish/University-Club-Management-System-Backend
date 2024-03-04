@@ -49,6 +49,32 @@ public class ActivityController {
         return 0;
     }
 
+    private static Integer queryParamsException(ActivityInfo activityInfo) {
+        try {
+            if (activityInfo.getTitle() == null || activityInfo.getTitle().isEmpty() ||
+                    activityInfo.getType() == null || activityInfo.getType().isEmpty() ||
+                    activityInfo.getClubName() == null || activityInfo.getClubName().isEmpty() ||
+                    activityInfo.getPageIndex() == null ||
+                    activityInfo.getPageSize() == null
+            ) throw new Exception("缺少参数！");
+        } catch (Exception e) {
+            return -20001;
+        }
+
+        try {
+            if (activityInfo.getTitle().length() > 36 ||
+                    activityInfo.getType().length() > 12 ||
+                    activityInfo.getClubName().length() > 24 ||
+                    activityInfo.getPageIndex() <= 0 ||
+                    activityInfo.getPageSize() <= 0
+            ) throw new Exception("参数格式错误！");
+        } catch (Exception e) {
+            return -20002;
+        }
+
+        return 0;
+    }
+
     @PostMapping("/create")
     public Result createActivity(@RequestBody ActivityInfo activityInfo) {
         Integer code = paramsException(activityInfo);
@@ -150,26 +176,63 @@ public class ActivityController {
 
     @PostMapping("/research/detail")
     public Result researchDetailActivity(@RequestBody ActivityInfo activityInfo) {
-        return null;
+        Integer id = activityInfo.getId();
+        try {
+            if (id == null || id <= 0) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        activityInfo = activity.researchDetailActivityInfo(id);
+        if (activityInfo == null) return new Result(-20003);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("activityInfo", activityInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/not-submit")
-    public Result researchNotSubmitActivity() {
-        return null;
+    public Result researchNotSubmitActivity(@RequestBody ActivityInfo activityInfo) {
+        Integer code = queryParamsException(activityInfo);
+        if (code != 0) return new Result(code);
+
+        activityInfo.setStatusCode(0);
+        Map<String, Object> data = activity.researchBasicActivityInfo(activityInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/not-approval")
-    public Result researchNotApprovalActivity() {
-        return null;
+    public Result researchNotApprovalActivity(@RequestBody ActivityInfo activityInfo) {
+        Integer code = queryParamsException(activityInfo);
+        if (code != 0) return new Result(code);
+
+        activityInfo.setStatusCode(1);
+        Map<String, Object> data = activity.researchBasicActivityInfo(activityInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/been-rejected")
-    public Result researchBeenRejectedActivity() {
-        return null;
+    public Result researchBeenRejectedActivity(@RequestBody ActivityInfo activityInfo) {
+        Integer code = queryParamsException(activityInfo);
+        if (code != 0) return new Result(code);
+
+        activityInfo.setStatusCode(2);
+        Map<String, Object> data = activity.researchBasicActivityInfo(activityInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/been-accepted")
-    public Result researchBeenAcceptedActivity() {
-        return null;
+    public Result researchBeenAcceptedActivity(@RequestBody ActivityInfo activityInfo) {
+        Integer code = queryParamsException(activityInfo);
+        if (code != 0) return new Result(code);
+
+        activityInfo.setStatusCode(3);
+        Map<String, Object> data = activity.researchBasicActivityInfo(activityInfo);
+
+        return new Result(0, data);
     }
 }
