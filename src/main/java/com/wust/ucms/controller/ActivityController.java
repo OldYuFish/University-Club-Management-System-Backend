@@ -128,7 +128,24 @@ public class ActivityController {
 
     @PostMapping("/approval")
     public Result approvalActivity(@RequestBody ActivityInfo activityInfo) {
-        return null;
+        Integer id = activityInfo.getId();
+        try {
+            if (id == null || id <= 0) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        ActivityInfo activityInformation = activity.researchDetailActivityInfo(id);
+        if (activityInformation == null) return new Result(-20003);
+        activityInformation.setStatusCode(activityInfo.getStatusCode());
+        activityInformation.setApprovalComment(activityInfo.getApprovalComment());
+
+        Integer code = activity.updateActivityInfo(activityInformation);
+        if (code <= 0) return new Result(code);
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", code);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/detail")
