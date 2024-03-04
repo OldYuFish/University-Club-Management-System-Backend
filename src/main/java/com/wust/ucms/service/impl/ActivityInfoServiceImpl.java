@@ -9,6 +9,7 @@ import com.wust.ucms.pojo.ActivityInfo;
 import com.wust.ucms.service.ActivityInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -25,9 +26,11 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
     @Override
     public Integer createActivityInfo(ActivityInfo activityInfo) {
         int flag = activity.insert(activityInfo);
-        if (flag > 0) return 0;
+        if (flag > 0) return activityInfo.getId();
 
-        return 5;
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+        return -20003;
     }
 
     @Override
@@ -35,7 +38,9 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
         int flag = activity.deleteById(activityId);
         if (flag > 0) return 0;
 
-        return 5;
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+        return -20003;
     }
 
     @Override
@@ -81,9 +86,11 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
         activityInfo.setClubId(clubId);
 
         int flag = activity.updateById(activityInfo);
-        if (flag > 0) return 0;
+        if (flag > 0) return activityInfo.getId();
 
-        return 5;
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+        return -20003;
     }
 
     @Override
