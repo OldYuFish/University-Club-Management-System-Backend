@@ -156,7 +156,10 @@ public class ActivityController {
     public Result approvalActivity(@RequestBody ActivityInfo activityInfo) {
         Integer id = activityInfo.getId();
         try {
-            if (id == null || id <= 0) throw new Exception("参数逻辑错误！");
+            if (id == null || id <= 0 ||
+                    activityInfo.getApprovalComment() == null || activityInfo.getApprovalComment().isEmpty() ||
+                    activityInfo.getStatusCode() == 0 || activityInfo.getStatusCode() == 1
+            ) throw new Exception("参数逻辑错误！");
         } catch (Exception e) {
             return new Result(-20006);
         }

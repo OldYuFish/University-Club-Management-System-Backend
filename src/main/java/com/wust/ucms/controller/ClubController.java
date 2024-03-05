@@ -112,7 +112,27 @@ public class ClubController {
 
     @PostMapping("/approval")
     public Result approvalClub(@RequestBody ClubInfo clubInfo) {
-        return null;
+        Integer id = clubInfo.getId();
+        try {
+            if (id == null || id <= 0 ||
+                    clubInfo.getApprovalComment() == null || clubInfo.getApprovalComment().isEmpty() ||
+                    clubInfo.getStatusCode() == 0 || clubInfo.getStatusCode() == 1
+            ) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        ClubInfo clubInformation = club.researchDetailClubInfo(id);
+        if (clubInformation == null) return new Result(-20003);
+        clubInformation.setStatusCode(clubInfo.getStatusCode());
+        clubInformation.setApprovalComment(clubInfo.getApprovalComment());
+
+        Integer code = club.updateClubInfo(clubInformation);
+        if (code <= 0) return new Result(code);
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", code);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/detail")
