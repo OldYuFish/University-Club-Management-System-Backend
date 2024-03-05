@@ -48,6 +48,30 @@ public class ClubController {
         return 0;
     }
 
+    private static Integer queryParamsException(ClubInfo clubInfo) {
+        try {
+            if (clubInfo.getPageIndex() == null ||
+                    clubInfo.getPageSize() == null
+            ) throw new Exception("缺少参数！");
+        } catch (Exception e) {
+            return -20001;
+        }
+
+        try {
+            if (clubInfo.getClubName().length() > 24 ||
+                    clubInfo.getType().length() > 8 ||
+                    clubInfo.getClubLevel().length() > 6 ||
+                    clubInfo.getDepartment().length() > 24 ||
+                    clubInfo.getPageIndex() <= 0 ||
+                    clubInfo.getPageSize() <= 0
+            ) throw new Exception("参数格式错误！");
+        } catch (Exception e) {
+            return -20002;
+        }
+
+        return 0;
+    }
+
     @PostMapping("/create")
     public Result createClub(@RequestBody ClubInfo clubInfo) {
         Integer code = paramsException(clubInfo);
@@ -155,21 +179,45 @@ public class ClubController {
 
     @PostMapping("/research/not-submit")
     public Result researchNotSubmitClub(@RequestBody ClubInfo clubInfo) {
-        return null;
+        Integer code = queryParamsException(clubInfo);
+        if (code != 0) return new Result(code);
+
+        clubInfo.setStatusCode(0);
+        Map<String, Object> data = club.researchBasicClubInfo(clubInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/not-approval")
     public Result researchNotApprovalClub(@RequestBody ClubInfo clubInfo) {
-        return null;
+        Integer code = queryParamsException(clubInfo);
+        if (code != 0) return new Result(code);
+
+        clubInfo.setStatusCode(1);
+        Map<String, Object> data = club.researchBasicClubInfo(clubInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/been-rejected")
     public Result researchBeenRejectedClub(@RequestBody ClubInfo clubInfo) {
-        return null;
+        Integer code = queryParamsException(clubInfo);
+        if (code != 0) return new Result(code);
+
+        clubInfo.setStatusCode(2);
+        Map<String, Object> data = club.researchBasicClubInfo(clubInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/been-accepted")
     public Result researchBeenAcceptedClub(@RequestBody ClubInfo clubInfo) {
-        return null;
+        Integer code = queryParamsException(clubInfo);
+        if (code != 0) return new Result(code);
+
+        clubInfo.setStatusCode(3);
+        Map<String, Object> data = club.researchBasicClubInfo(clubInfo);
+
+        return new Result(0, data);
     }
 }

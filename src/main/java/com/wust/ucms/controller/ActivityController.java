@@ -51,10 +51,7 @@ public class ActivityController {
 
     private static Integer queryParamsException(ActivityInfo activityInfo) {
         try {
-            if (activityInfo.getTitle() == null || activityInfo.getTitle().isEmpty() ||
-                    activityInfo.getType() == null || activityInfo.getType().isEmpty() ||
-                    activityInfo.getClubName() == null || activityInfo.getClubName().isEmpty() ||
-                    activityInfo.getPageIndex() == null ||
+            if (activityInfo.getPageIndex() == null ||
                     activityInfo.getPageSize() == null
             ) throw new Exception("缺少参数！");
         } catch (Exception e) {
