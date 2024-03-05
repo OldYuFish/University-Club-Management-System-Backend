@@ -137,7 +137,20 @@ public class ClubController {
 
     @PostMapping("/research/detail")
     public Result researchDetailClub(@RequestBody ClubInfo clubInfo) {
-        return null;
+        Integer id = clubInfo.getId();
+        try {
+            if (id == null || id <= 0) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        clubInfo = club.researchDetailClubInfo(id);
+        if (clubInfo == null) return new Result(-20003);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("clubInfo", clubInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/not-submit")
