@@ -29,5 +29,6 @@ public class ClubInfo {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date establishmentTime;
     private Integer statusCode;
+    private String approvalComment;
     private Integer loginId;
 }
