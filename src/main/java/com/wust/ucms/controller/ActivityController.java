@@ -131,7 +131,7 @@ public class ActivityController {
                             (!Objects.equals(activityInfo.getOutput(), BigDecimal.ZERO) ||
                                     (activityInfo.getRealNumber() != null && activityInfo.getRealNumber() != 0) ||
                                     (activityInfo.getSummarize() != null && activityInfo.getSummarize().isEmpty()))) ||
-                    (activityInfo.getStatusCode() !=2 &&
+                    ((activityInfo.getStatusCode() == 0 || activityInfo.getStatusCode() == 1) &&
                             (activityInfo.getApprovalComment() != null && activityInfo.getApprovalComment().isEmpty())) ||
                     (activityInfo.getStatusCode() ==2 &&
                             (activityInfo.getApprovalComment() == null || !activityInfo.getApprovalComment().isEmpty())) ||

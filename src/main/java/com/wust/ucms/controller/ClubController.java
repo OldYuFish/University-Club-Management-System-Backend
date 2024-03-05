@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/club")
@@ -74,12 +73,41 @@ public class ClubController {
 
     @PostMapping("/delete")
     public Result deleteClub(@RequestBody ClubInfo clubInfo) {
-        return null;
+        Integer id = clubInfo.getId();
+        try {
+            if (id == null || id <= 0) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        Integer code = club.deleteClubInfo(id);
+        return new Result(code);
     }
 
     @PostMapping("/update")
     public Result updateClub(@RequestBody ClubInfo clubInfo) {
-        return null;
+        Integer code = paramsException(clubInfo);
+        if (code != 0) return new Result(code);
+
+        try {
+            if (clubInfo.getTotalFund().compareTo(clubInfo.getSurplusFund()) < 0 ||
+                    (clubInfo.getStatusCode() != 3 && clubInfo.getEstablishmentTime() != null) ||
+                    (clubInfo.getStatusCode() == 3 && clubInfo.getEstablishmentTime() == null) ||
+                    ((clubInfo.getStatusCode() == 0 || clubInfo.getStatusCode() == 1) &&
+                            (clubInfo.getApprovalComment() != null && !clubInfo.getApprovalComment().isEmpty())) ||
+                    (clubInfo.getStatusCode() == 2 &&
+                            (clubInfo.getApprovalComment() == null || clubInfo.getApprovalComment().isEmpty()))
+            ) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        code = club.updateClubInfo(clubInfo);
+        if (code <= 0) return new Result(code);
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", code);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/approval")
