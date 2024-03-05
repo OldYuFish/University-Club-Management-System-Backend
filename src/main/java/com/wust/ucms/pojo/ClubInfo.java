@@ -1,5 +1,6 @@
 package com.wust.ucms.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -31,4 +32,14 @@ public class ClubInfo {
     private Integer statusCode;
     private String approvalComment;
     private Integer loginId;
+    @TableField(exist = false)
+    private String realName;
+    @TableField(exist = false)
+    private String studentNumber;
+    @TableField(exist = false)
+    private String email;
+    @TableField(exist = false)
+    private Long pageIndex;
+    @TableField(exist = false)
+    private Long pageSize;
 }
