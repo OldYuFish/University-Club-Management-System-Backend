@@ -24,4 +24,5 @@ public class FundInfo {
     private Integer statusCode;
     private String approvalComment;
     private Integer clubId;
+    private Integer competitionId;
 }

@@ -13,5 +13,4 @@ public class CompetitionBonus {
     private String type;
     private String competitionLevel;
     private String award;
-    private Integer fundId;
 }
