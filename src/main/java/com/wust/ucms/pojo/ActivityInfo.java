@@ -17,8 +17,6 @@ public class ActivityInfo {
     private Integer id;
     private String title;
     private String coOrganizer;
-    private BigDecimal budget;
-    private BigDecimal output;
     private String type;
     private String address;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -39,7 +37,6 @@ public class ActivityInfo {
     private String description;
     private String summarize;
     private Integer statusCode;
-    private Integer useFund;
     private String approvalComment;
     private Integer clubId;
     @TableField(exist = false)

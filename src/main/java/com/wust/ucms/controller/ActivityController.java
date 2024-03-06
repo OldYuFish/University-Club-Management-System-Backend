@@ -35,10 +35,6 @@ public class ActivityController {
 
         try {
             if (activityInfo.getTitle().length() > 36 ||
-                    activityInfo.getBudget().compareTo(BigDecimal.ZERO) < 0 ||
-                    activityInfo.getBudget().compareTo(new BigDecimal("99999999.99")) > 0 ||
-                    activityInfo.getOutput().compareTo(BigDecimal.ZERO) < 0 ||
-                    activityInfo.getOutput().compareTo(new BigDecimal("99999999.99")) > 0 ||
                     activityInfo.getType().length() > 12 ||
                     activityInfo.getAddress().length() > 36
             ) throw new Exception("参数格式错误！");
@@ -78,10 +74,7 @@ public class ActivityController {
         if (code != 0) return new Result(code);
 
         try {
-            if ((activityInfo.getUseFund() == 0 && !Objects.equals(activityInfo.getBudget(), BigDecimal.ZERO)) ||
-                    (activityInfo.getUseFund() != 0 && Objects.equals(activityInfo.getBudget(), BigDecimal.ZERO)) ||
-                    (activityInfo.getStatusCode() != 0 && activityInfo.getStatusCode() != 1) ||
-                    !Objects.equals(activityInfo.getOutput(), BigDecimal.ZERO) ||
+            if ((activityInfo.getStatusCode() != 0 && activityInfo.getStatusCode() != 1) ||
                     (activityInfo.getRealNumber() != null && activityInfo.getRealNumber() != 0) ||
                     (activityInfo.getSummarize() != null && activityInfo.getSummarize().isEmpty()) ||
                     (activityInfo.getApprovalComment() != null && activityInfo.getApprovalComment().isEmpty()) ||
@@ -106,7 +99,9 @@ public class ActivityController {
     public Result deleteActivity(@RequestBody ActivityInfo activityInfo) {
         Integer id = activityInfo.getId();
         try {
-            if (id == null || id <= 0) throw new Exception("参数逻辑错误！");
+            if (id == null || id <= 0 ||
+                    activity.researchDetailActivityInfo(id).getStatusCode() == 3
+            ) throw new Exception("参数逻辑错误！");
         } catch (Exception e) {
             return new Result(-20006);
         }
@@ -122,11 +117,8 @@ public class ActivityController {
 
         try {
             if (activityInfo.getId() == null || activityInfo.getId() <= 0 ||
-                    (activityInfo.getUseFund() == 0 && !Objects.equals(activityInfo.getBudget(), BigDecimal.ZERO)) ||
-                    (activityInfo.getUseFund() != 0 && Objects.equals(activityInfo.getBudget(), BigDecimal.ZERO)) ||
                     (activityInfo.getStatusCode() != 3 &&
-                            (!Objects.equals(activityInfo.getOutput(), BigDecimal.ZERO) ||
-                                    (activityInfo.getRealNumber() != null && activityInfo.getRealNumber() != 0) ||
+                            ((activityInfo.getRealNumber() != null && activityInfo.getRealNumber() != 0) ||
                                     (activityInfo.getSummarize() != null && activityInfo.getSummarize().isEmpty()))) ||
                     ((activityInfo.getStatusCode() == 0 || activityInfo.getStatusCode() == 1) &&
                             (activityInfo.getApprovalComment() != null && activityInfo.getApprovalComment().isEmpty())) ||

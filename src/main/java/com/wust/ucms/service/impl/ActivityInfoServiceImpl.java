@@ -47,8 +47,6 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
     public Integer updateActivityInfo(ActivityInfo activityInfo) {
         String title = activityInfo.getTitle();
         String coOrganizer = activityInfo.getCoOrganizer();
-        BigDecimal budget = activityInfo.getBudget();
-        BigDecimal output = activityInfo.getOutput();
         String type = activityInfo.getType();
         String address = activityInfo.getAddress();
         Date activityStartTime = activityInfo.getActivityStartTime();
@@ -61,7 +59,6 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
         String description = activityInfo.getDescription();
         String summarize = activityInfo.getSummarize();
         Integer statusCode = activityInfo.getStatusCode();
-        Integer useFund = activityInfo.getUseFund();
         String approvalComment = activityInfo.getApprovalComment();
         Integer clubId = activityInfo.getClubId();
 
@@ -69,8 +66,6 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
 
         activityInfo.setTitle(title);
         activityInfo.setCoOrganizer(coOrganizer);
-        activityInfo.setBudget(budget);
-        activityInfo.setOutput(output);
         activityInfo.setType(type);
         activityInfo.setAddress(address);
         activityInfo.setActivityStartTime(activityStartTime);
@@ -83,7 +78,6 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
         activityInfo.setDescription(description);
         activityInfo.setSummarize(summarize);
         activityInfo.setStatusCode(statusCode);
-        activityInfo.setUseFund(useFund);
         activityInfo.setApprovalComment(approvalComment);
         activityInfo.setClubId(clubId);
 
