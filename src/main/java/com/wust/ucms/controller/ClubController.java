@@ -99,7 +99,9 @@ public class ClubController {
     public Result deleteClub(@RequestBody ClubInfo clubInfo) {
         Integer id = clubInfo.getId();
         try {
-            if (id == null || id <= 0) throw new Exception("参数逻辑错误！");
+            if (id == null || id <= 0 ||
+                    club.researchDetailClubInfo(id).getStatusCode() == 3
+            ) throw new Exception("参数逻辑错误！");
         } catch (Exception e) {
             return new Result(-20006);
         }
