@@ -25,7 +25,7 @@ public class RedisCache {
     }
 
     public <T> void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit) {
-        redisTemplate.opsForValue().set(key, value);
+        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 
     public boolean expire(final String key, final long timeout) {
@@ -100,5 +100,57 @@ public class RedisCache {
 
     public Collection<String> keys(final String pattern) {
         return redisTemplate.keys(pattern);
+    }
+
+    public boolean set(String key,Object value,long time){
+        try{
+            if(time > 0){
+                redisTemplate.opsForValue().set(key,value,time,TimeUnit.SECONDS);
+            }else{
+                redisTemplate.opsForValue().set(key,value);
+            }
+            return true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean set(String key, Object value) {
+        try {
+            redisTemplate.opsForValue().set(key, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Object get(String key){
+        return key == null ? null : redisTemplate.opsForValue().get(key);
+    }
+
+    public Double incr(String key, Double number){
+        if(number < 0){
+            new RuntimeException("递增因子必须大于0");
+        }
+        return redisTemplate.opsForValue().increment(key,number);
+    }
+
+    public void del(String key){
+        redisTemplate.delete(key);
+    }
+
+    public long getExpireSeconds(String key){
+        return redisTemplate.getExpire(key,TimeUnit.SECONDS);
+    }
+
+    public boolean hasKey(String key) {
+        try {
+            return redisTemplate.hasKey(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

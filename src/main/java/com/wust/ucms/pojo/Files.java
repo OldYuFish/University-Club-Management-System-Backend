@@ -1,5 +1,6 @@
 package com.wust.ucms.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -11,11 +12,10 @@ public class Files {
     private Integer id;
     private String fileName;
     private String src;
-    private Integer isDelete;
     private Integer loginId;
     private Integer clubId;
     private Integer memberId;
     private Integer activityId;
     private Integer fundId;
-    private Integer bonusId;
+    private Integer competitionId;
 }
