@@ -10,7 +10,10 @@ public class MemberInfo {
     @TableId
     private Integer id;
     private String memberName;
+    private String department;
     private String job;
+    private String studentNumber;
+    private String email;
     private String honor;
     private String description;
     private Integer clubId;

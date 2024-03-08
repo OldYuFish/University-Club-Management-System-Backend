@@ -17,5 +17,4 @@ public class Files {
     private Integer memberId;
     private Integer activityId;
     private Integer fundId;
-    private Integer competitionId;
 }

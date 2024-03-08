@@ -1,6 +1,8 @@
 package com.wust.ucms.service.impl;
 
 import com.wust.ucms.mapper.FilesMapper;
+import com.wust.ucms.mapper.LoginInfoMapper;
+import com.wust.ucms.mapper.MemberInfoMapper;
 import com.wust.ucms.pojo.Files;
 import com.wust.ucms.service.FilesService;
 import com.wust.ucms.utils.FileUtil;
@@ -21,6 +23,12 @@ public class FilesServiceImpl implements FilesService {
 
     @Autowired
     FilesMapper file;
+
+    @Autowired
+    LoginInfoMapper login;
+
+    @Autowired
+    MemberInfoMapper member;
 
     @Override
     public Integer createFiles(Files files) {
@@ -81,8 +89,11 @@ public class FilesServiceImpl implements FilesService {
     }
 
     @Override
-    public List<String> researchFileNameByLoginId(Integer loginId) {
-        return file.selectFileNameByLoginId(loginId);
+    public List<String> researchFileNameByLoginId(String email) {
+        Integer loginId = login.selectLoginIdByEmail(email);
+        if (loginId > 0) return file.selectFileNameByLoginId(loginId);
+
+        return null;
     }
 
     @Override
@@ -91,8 +102,11 @@ public class FilesServiceImpl implements FilesService {
     }
 
     @Override
-    public List<String> researchFileNameByMemberId(Integer memberId) {
-        return file.selectFileNameByMemberId(memberId);
+    public List<String> researchFileNameByMemberId(String studentNumber) {
+        Integer memberId = member.selectMemberIdByStudentNumber(studentNumber);
+        if (memberId > 0) return file.selectFileNameByMemberId(memberId);
+
+        return null;
     }
 
     @Override
@@ -103,10 +117,5 @@ public class FilesServiceImpl implements FilesService {
     @Override
     public List<String> researchFileNameByFundId(Integer fundId) {
         return file.selectFileNameByFundId(fundId);
-    }
-
-    @Override
-    public List<String> researchFileNameByCompetitionId(Integer competitionId) {
-        return file.selectFileNameByCompetitionId(competitionId);
     }
 }
