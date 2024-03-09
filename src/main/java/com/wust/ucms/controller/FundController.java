@@ -68,10 +68,7 @@ public class FundController {
 
         try {
             if (fundInfo.getAmount().compareTo(fundInfo.getSurplus()) < 0 ||
-                    ((fundInfo.getStatusCode() == 0 || fundInfo.getStatusCode() == 1) &&
-                            (fundInfo.getApprovalComment() != null && !fundInfo.getApprovalComment().isEmpty())) ||
-                    (fundInfo.getStatusCode() == 2 &&
-                            (fundInfo.getApprovalComment() == null || fundInfo.getApprovalComment().isEmpty())) ||
+                    (fundInfo.getStatusCode() != 0 && fundInfo.getStatusCode() != 1) ||
                     fundInfo.getCompetitionId() != null ||
                     (Objects.equals(fundInfo.getType(), "竞赛奖金") &&
                             fundInfo.getCompetitionBonus() == null)
@@ -105,7 +102,28 @@ public class FundController {
 
     @PostMapping("/update")
     public Result updateFund(@RequestBody FundInfo fundInfo) {
-        return null;
+        Integer code = paramsException(fundInfo);
+        if (code != 0) return new Result(code);
+
+        try {
+            if (fundInfo.getAmount().compareTo(fundInfo.getSurplus()) < 0 ||
+                    ((fundInfo.getStatusCode() == 0 || fundInfo.getStatusCode() == 1) &&
+                            (fundInfo.getApprovalComment() != null && !fundInfo.getApprovalComment().isEmpty())) ||
+                    (fundInfo.getStatusCode() == 2 &&
+                            (fundInfo.getApprovalComment() == null || fundInfo.getApprovalComment().isEmpty())) ||
+                    (Objects.equals(fundInfo.getType(), "竞赛奖金") &&
+                            fundInfo.getCompetitionBonus() == null)
+            ) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        code = fund.updateFundInfo(fundInfo);
+        if (code <= 0) return new Result(code);
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", code);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/approval")
