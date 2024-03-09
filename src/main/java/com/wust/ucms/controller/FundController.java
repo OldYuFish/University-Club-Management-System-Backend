@@ -90,7 +90,17 @@ public class FundController {
 
     @PostMapping("/delete")
     public Result deleteFund(@RequestBody FundInfo fundInfo) {
-        return null;
+        Integer id = fundInfo.getId();
+        try {
+            if (id == null || id <= 0 ||
+                    fund.researchDetailFundInfo(id).getStatusCode() == 3
+            ) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        Integer code = fund.deleteFundInfo(id);
+        return new Result(code);
     }
 
     @PostMapping("/update")

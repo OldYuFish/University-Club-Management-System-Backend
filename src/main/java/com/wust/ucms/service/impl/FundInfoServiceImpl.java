@@ -34,18 +34,22 @@ public class FundInfoServiceImpl implements FundInfoService {
 
     @Override
     public Integer createFundInfo(FundInfo fundInfo) {
-        int flag = fund.insert(fundInfo);
-        if (flag > 0) {
-            if (Objects.equals(fundInfo.getType(), "竞赛奖金")) {
-                CompetitionBonus competitionBonus = fundInfo.getCompetitionBonus();
-                flag = competition.insert(competitionBonus);
+        if (Objects.equals(fundInfo.getType(), "竞赛奖金")) {
+            CompetitionBonus competitionBonus = fundInfo.getCompetitionBonus();
+            int flag = competition.insert(competitionBonus);
+            if (flag > 0) {
+                fundInfo.setCompetitionId(competitionBonus.getId());
+                flag = fund.insert(fundInfo);
                 while (flag <= 0) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    flag = competition.insert(competitionBonus);
+                    flag = fund.insert(fundInfo);
                 }
-                fundInfo.setCompetitionId(competitionBonus.getId());
+
+                return fundInfo.getId();
             }
-            return fundInfo.getId();
+        } else {
+            int flag = fund.insert(fundInfo);
+            if (flag > 0) return fundInfo.getId();
         }
 
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -54,20 +58,20 @@ public class FundInfoServiceImpl implements FundInfoService {
     }
 
     @Override
-    public Integer deleteFundInfo(FundInfo fundInfo) {
+    public Integer deleteFundInfo(Integer fundId) {
         int flag;
-        if (Objects.equals(fundInfo.getType(), "竞赛奖金")) {
-            flag = competition.deleteById(fund.selectById(fundInfo.getId()).getCompetitionId());
+        if (Objects.equals(fund.selectById(fundId).getType(), "竞赛奖金")) {
+            flag = competition.deleteById(fund.selectById(fundId).getCompetitionId());
             if (flag > 0) {
-                flag = fund.deleteById(fundInfo.getId());
+                flag = fund.deleteById(fundId);
                 while (flag <= 0) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                    flag = fund.deleteById(fundInfo.getId());
+                    flag = fund.deleteById(fundId);
                 }
                 return 0;
             }
         } else {
-            flag = fund.deleteById(fundInfo.getId());
+            flag = fund.deleteById(fundId);
             if (flag > 0) return 0;
         }
 
