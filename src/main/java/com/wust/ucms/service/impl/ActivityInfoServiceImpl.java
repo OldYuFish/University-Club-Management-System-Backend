@@ -126,7 +126,7 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
         pagination.put("pageSize", activityInfo.getPageSize());
 
         List<Map<String, Object>> activityList = new ArrayList<>();
-        for (ActivityInfo a: page.getRecords()) {
+        for (ActivityInfo a : page.getRecords()) {
             Map<String, Object> map = new HashMap<>();
             map.put("title", a.getTitle());
             map.put("clubName", club.selectById(a.getClubId()).getClubName());

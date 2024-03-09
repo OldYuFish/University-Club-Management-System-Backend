@@ -1,5 +1,6 @@
 package com.wust.ucms.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,4 +26,15 @@ public class FundInfo {
     private String approvalComment;
     private Integer clubId;
     private Integer competitionId;
+    private Integer activityId;
+    @TableField(exist = false)
+    private String clubName;
+    @TableField(exist = false)
+    private CompetitionBonus competitionBonus;
+    @TableField(exist = false)
+    private String title;
+    @TableField(exist = false)
+    private Long pageIndex;
+    @TableField(exist = false)
+    private Long pageSize;
 }
