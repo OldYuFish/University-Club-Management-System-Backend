@@ -10,4 +10,10 @@ public interface LoginInfoMapper extends BaseMapper<LoginInfo> {
 
     @Select("select id from login_info where email = #{email}")
     Integer selectLoginIdByEmail(String email);
+
+    @Select("select id from login_info where student_number = #{studentNumber}")
+    Integer selectLoginIdByStudentNumber(String studentNumber);
+
+    @Select("select id from login_info where teacher_number = #{teacherNumber}")
+    Integer selectLoginIdByTeacherNumber(String teacherNumber);
 }
