@@ -61,6 +61,29 @@ public class FundController {
         return 0;
     }
 
+    private static Integer queryParamsException(FundInfo fundInfo) {
+        try {
+            if (fundInfo.getPageIndex() == null ||
+                    fundInfo.getPageSize() == null
+            ) throw new Exception("缺少参数！");
+        } catch (Exception e) {
+            return -20001;
+        }
+
+        try {
+            if (fundInfo.getTheme().length() > 24 ||
+                    fundInfo.getType().length() > 8 ||
+                    fundInfo.getClubName().length() > 24 ||
+                    fundInfo.getPageIndex() <= 0 ||
+                    fundInfo.getPageSize() <= 0
+            ) throw new Exception("参数格式错误！");
+        } catch (Exception e) {
+            return -20002;
+        }
+
+        return 0;
+    }
+
     @PostMapping("/create")
     public Result createFund(@RequestBody FundInfo fundInfo) {
         Integer code = paramsException(fundInfo);
@@ -128,31 +151,89 @@ public class FundController {
 
     @PostMapping("/approval")
     public Result approvalFund(@RequestBody FundInfo fundInfo) {
-        return null;
+        Integer id = fundInfo.getId();
+        try {
+            if (id == null || id <= 0 ||
+                    (fundInfo.getStatusCode() == 2 &&
+                            (fundInfo.getApprovalComment() == null || fundInfo.getApprovalComment().isEmpty())) ||
+                    fundInfo.getStatusCode() == 0 || fundInfo.getStatusCode() == 1
+            ) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        FundInfo fundInformation = fund.researchDetailFundInfo(fundInfo.getId());
+        if (fundInformation == null) return new Result(-20003);
+        fundInformation.setStatusCode(fundInfo.getStatusCode());
+        fundInformation.setApprovalComment(fundInfo.getApprovalComment());
+
+        Integer code = fund.updateFundInfo(fundInformation);
+        if (code <= 0) return new Result(code);
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", code);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/detail")
     public Result researchDetailFund(@RequestBody FundInfo fundInfo) {
-        return null;
+        Integer id = fundInfo.getId();
+        try {
+            if (id == null || id <= 0) throw new Exception("参数逻辑错误！");
+        } catch (Exception e) {
+            return new Result(-20006);
+        }
+
+        fundInfo = fund.researchDetailFundInfo(id);
+        if (fundInfo == null) return new Result(-20003);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("fundInfo", fundInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/not-submit")
     public Result researchNotSubmitFund(@RequestBody FundInfo fundInfo) {
-        return null;
+        Integer code = queryParamsException(fundInfo);
+        if (code != 0) return new Result(code);
+
+        fundInfo.setStatusCode(0);
+        Map<String, Object> data = fund.researchBasicFundInfo(fundInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/not-approval")
     public Result researchNotApprovalFund(@RequestBody FundInfo fundInfo) {
-        return null;
+        Integer code = queryParamsException(fundInfo);
+        if (code != 0) return new Result(code);
+
+        fundInfo.setStatusCode(1);
+        Map<String, Object> data = fund.researchBasicFundInfo(fundInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/been-rejected")
     public Result researchBeenRejectedFund(@RequestBody FundInfo fundInfo) {
-        return null;
+        Integer code = queryParamsException(fundInfo);
+        if (code != 0) return new Result(code);
+
+        fundInfo.setStatusCode(2);
+        Map<String, Object> data = fund.researchBasicFundInfo(fundInfo);
+
+        return new Result(0, data);
     }
 
     @PostMapping("/research/been-accepted")
     public Result researchBeenAcceptedFund(@RequestBody FundInfo fundInfo) {
-        return null;
+        Integer code = queryParamsException(fundInfo);
+        if (code != 0) return new Result(code);
+
+        fundInfo.setStatusCode(3);
+        Map<String, Object> data = fund.researchBasicFundInfo(fundInfo);
+
+        return new Result(0, data);
     }
 }

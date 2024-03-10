@@ -141,7 +141,8 @@ public class ClubController {
         Integer id = clubInfo.getId();
         try {
             if (id == null || id <= 0 ||
-                    clubInfo.getApprovalComment() == null || clubInfo.getApprovalComment().isEmpty() ||
+                    (clubInfo.getStatusCode() == 2 &&
+                            (clubInfo.getApprovalComment() == null || clubInfo.getApprovalComment().isEmpty())) ||
                     clubInfo.getStatusCode() == 0 || clubInfo.getStatusCode() == 1
             ) throw new Exception("参数逻辑错误！");
         } catch (Exception e) {
