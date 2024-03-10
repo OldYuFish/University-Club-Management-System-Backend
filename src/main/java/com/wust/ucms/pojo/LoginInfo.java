@@ -19,4 +19,6 @@ public class LoginInfo {
     private String email;
     private Integer isDelete;
     private Integer roleId;
+    @TableField(exist = false)
+    private String oldPassword;
 }
