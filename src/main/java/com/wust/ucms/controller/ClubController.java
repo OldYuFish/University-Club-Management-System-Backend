@@ -87,6 +87,9 @@ public class ClubController {
             return new Result(-20006);
         }
 
+        if (club.researchClubIdByClubName(clubInfo.getClubName()) != null)
+            return new Result(-20208);
+
         code = club.createClubInfo(clubInfo);
         if (code <= 0) return new Result(code);
         Map<String, Object> data = new HashMap<>();
@@ -127,6 +130,9 @@ public class ClubController {
         } catch (Exception e) {
             return new Result(-20006);
         }
+
+        if (club.researchClubIdByClubName(clubInfo.getClubName()) != null)
+            return new Result(-20208);
 
         code = club.updateClubInfo(clubInfo);
         if (code <= 0) return new Result(code);

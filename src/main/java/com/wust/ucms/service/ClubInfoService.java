@@ -10,4 +10,5 @@ public interface ClubInfoService {
     Integer updateClubInfo(ClubInfo clubInfo);
     ClubInfo researchDetailClubInfo(Integer clubId);
     Map<String, Object> researchBasicClubInfo(ClubInfo clubInfo);
+    Integer researchClubIdByClubName(String clubName);
 }

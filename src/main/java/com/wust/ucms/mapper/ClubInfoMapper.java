@@ -15,4 +15,7 @@ public interface ClubInfoMapper extends BaseMapper<ClubInfo> {
 
     @Select("select * from club_info where status_code = 3")
     List<ClubInfo> selectAllActiveClubInfo();
+
+    @Select("select id from club_info where login_id = #{loginId}")
+    Integer selectClubIdByLoginId(Integer loginId);
 }

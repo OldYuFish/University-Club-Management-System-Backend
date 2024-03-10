@@ -26,6 +26,9 @@ public class ClubInfoServiceImpl implements ClubInfoService {
 
     @Override
     public Integer createClubInfo(ClubInfo clubInfo) {
+        clubInfo.setLoginId(login.selectLoginIdByStudentNumber(clubInfo.getStudentNumber()));
+        if (club.selectClubIdByLoginId(clubInfo.getLoginId()) != null)
+            return -20209;
         int flag = club.insert(clubInfo);
         if (flag > 0) return clubInfo.getId();
 
@@ -143,5 +146,10 @@ public class ClubInfoServiceImpl implements ClubInfoService {
         data.put("pagination", pagination);
 
         return data;
+    }
+
+    @Override
+    public Integer researchClubIdByClubName(String clubName) {
+        return club.selectClubIdByClubName(clubName);
     }
 }
