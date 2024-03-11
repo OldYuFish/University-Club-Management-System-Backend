@@ -49,7 +49,8 @@ public class JWTAuthenticationTokenFilter extends OncePerRequestFilter {
         }
 
         if (!Objects.equals(loginInfo.getToken(), token)) {
-            throw new RuntimeException("The incoming token is inconsistent with the token stored in redis");
+            loginInfo.setToken(token);
+            redisCache.setCacheObject("login:" + userId, loginInfo);
         }
 
         filterChain.doFilter(request, response);
