@@ -6,8 +6,8 @@ import java.util.Map;
 
 public interface LoginInfoService {
     Integer createUser(LoginInfo loginInfo);
-    Integer logicalDeleteUser(LoginInfo loginInfo);
-    Integer logout(LoginInfo loginInfo);
+    Integer logicalDeleteUser(Integer loginId);
+    Integer logout(Integer loginId);
     Integer update(LoginInfo loginInfo);
     Integer verify(LoginInfo loginInfo);
     LoginInfo researchDetail(LoginInfo loginInfo);

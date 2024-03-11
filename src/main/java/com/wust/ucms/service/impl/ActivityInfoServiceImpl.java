@@ -10,6 +10,7 @@ import com.wust.ucms.service.ActivityInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -100,7 +101,7 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
     public Map<String, Object> researchBasicActivityInfo(ActivityInfo activityInfo) {
         LambdaQueryWrapper<ActivityInfo> lqw = new LambdaQueryWrapper<>();
         lqw.like(
-                activityInfo.getTitle() != null && !activityInfo.getTitle().isEmpty(),
+                StringUtils.hasText(activityInfo.getTitle()),
                 ActivityInfo::getTitle,
                 activityInfo.getTitle()
         ).eq(
@@ -108,7 +109,7 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
                 ActivityInfo::getClubId,
                 club.selectClubIdByClubName(activityInfo.getClubName())
         ).eq(
-                activityInfo.getType() != null && activityInfo.getType().isEmpty(),
+                StringUtils.hasText(activityInfo.getType()),
                 ActivityInfo::getType,
                 activityInfo.getType()
         ).eq(

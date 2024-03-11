@@ -4,6 +4,7 @@ import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.FundInfo;
 import com.wust.ucms.service.impl.FundInfoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -21,21 +22,17 @@ public class FundController {
 
     private static Integer paramsException(FundInfo fundInfo) {
         try {
-            if (fundInfo.getTheme() == null || fundInfo.getTheme().isEmpty() ||
-                    fundInfo.getType() == null || fundInfo.getType().isEmpty() ||
+            if (!StringUtils.hasText(fundInfo.getTheme()) ||
+                    !StringUtils.hasText(fundInfo.getType()) ||
                     fundInfo.getAmount() == null ||
                     fundInfo.getSurplus() == null ||
                     fundInfo.getAppropriationTime() == null ||
                     fundInfo.getClubId() == null ||
                     (fundInfo.getType().equals("竞赛奖金") &&
-                            (fundInfo.getCompetitionBonus().getCompetitionName() == null ||
-                                    fundInfo.getCompetitionBonus().getCompetitionName().isEmpty() ||
-                                    fundInfo.getCompetitionBonus().getType() == null ||
-                                    fundInfo.getCompetitionBonus().getType().isEmpty() ||
-                                    fundInfo.getCompetitionBonus().getCompetitionLevel() == null ||
-                                    fundInfo.getCompetitionBonus().getCompetitionLevel().isEmpty() ||
-                                    fundInfo.getCompetitionBonus().getAward() == null ||
-                                    fundInfo.getCompetitionBonus().getAward().isEmpty()))
+                            (!StringUtils.hasText(fundInfo.getCompetitionBonus().getCompetitionName()) ||
+                                    !StringUtils.hasText(fundInfo.getCompetitionBonus().getType()) ||
+                                    !StringUtils.hasText(fundInfo.getCompetitionBonus().getCompetitionLevel()) ||
+                                    !StringUtils.hasText(fundInfo.getCompetitionBonus().getAward())))
             ) throw new Exception("缺少参数！");
         } catch (Exception e) {
             return -20001;
@@ -131,9 +128,9 @@ public class FundController {
         try {
             if (fundInfo.getAmount().compareTo(fundInfo.getSurplus()) < 0 ||
                     ((fundInfo.getStatusCode() == 0 || fundInfo.getStatusCode() == 1) &&
-                            (fundInfo.getApprovalComment() != null && !fundInfo.getApprovalComment().isEmpty())) ||
+                            StringUtils.hasText(fundInfo.getApprovalComment())) ||
                     (fundInfo.getStatusCode() == 2 &&
-                            (fundInfo.getApprovalComment() == null || fundInfo.getApprovalComment().isEmpty())) ||
+                            !StringUtils.hasText(fundInfo.getApprovalComment())) ||
                     (Objects.equals(fundInfo.getType(), "竞赛奖金") &&
                             fundInfo.getCompetitionBonus() == null)
             ) throw new Exception("参数逻辑错误！");
@@ -155,7 +152,7 @@ public class FundController {
         try {
             if (id == null || id <= 0 ||
                     (fundInfo.getStatusCode() == 2 &&
-                            (fundInfo.getApprovalComment() == null || fundInfo.getApprovalComment().isEmpty())) ||
+                            !StringUtils.hasText(fundInfo.getApprovalComment())) ||
                     fundInfo.getStatusCode() == 0 || fundInfo.getStatusCode() == 1
             ) throw new Exception("参数逻辑错误！");
         } catch (Exception e) {

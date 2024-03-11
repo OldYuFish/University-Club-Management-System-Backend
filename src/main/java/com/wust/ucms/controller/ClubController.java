@@ -4,6 +4,7 @@ import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.ClubInfo;
 import com.wust.ucms.service.impl.ClubInfoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -20,8 +21,8 @@ public class ClubController {
 
     private static Integer paramsException(ClubInfo clubInfo) {
         try {
-            if (clubInfo.getClubName() == null || clubInfo.getClubName().isEmpty() ||
-                    clubInfo.getType() == null || clubInfo.getType().isEmpty() ||
+            if (!StringUtils.hasText(clubInfo.getClubName()) ||
+                    !StringUtils.hasText(clubInfo.getType()) ||
                     clubInfo.getMembersNumber() == null ||
                     clubInfo.getApplicationTime() == null ||
                     clubInfo.getLoginId() == null
@@ -80,7 +81,7 @@ public class ClubController {
         try {
             if (clubInfo.getTotalFund().compareTo(clubInfo.getSurplusFund()) < 0 ||
                     clubInfo.getEstablishmentTime() != null ||
-                    (clubInfo.getApprovalComment() != null && clubInfo.getApprovalComment().isEmpty()) ||
+                    StringUtils.hasText(clubInfo.getApprovalComment()) ||
                     (clubInfo.getStatusCode() != 0 && clubInfo.getStatusCode() != 1)
             ) throw new Exception("参数逻辑错误！");
         } catch (Exception e) {
@@ -88,7 +89,7 @@ public class ClubController {
         }
 
         if (club.researchClubIdByClubName(clubInfo.getClubName()) != null)
-            return new Result(-20208);
+            return new Result(-20202);
 
         code = club.createClubInfo(clubInfo);
         if (code <= 0) return new Result(code);
@@ -123,16 +124,16 @@ public class ClubController {
                     (clubInfo.getStatusCode() != 3 && clubInfo.getEstablishmentTime() != null) ||
                     (clubInfo.getStatusCode() == 3 && clubInfo.getEstablishmentTime() == null) ||
                     ((clubInfo.getStatusCode() == 0 || clubInfo.getStatusCode() == 1) &&
-                            (clubInfo.getApprovalComment() != null && !clubInfo.getApprovalComment().isEmpty())) ||
+                            StringUtils.hasText(clubInfo.getApprovalComment())) ||
                     (clubInfo.getStatusCode() == 2 &&
-                            (clubInfo.getApprovalComment() == null || clubInfo.getApprovalComment().isEmpty()))
+                            !StringUtils.hasText(clubInfo.getApprovalComment()))
             ) throw new Exception("参数逻辑错误！");
         } catch (Exception e) {
             return new Result(-20006);
         }
 
         if (club.researchClubIdByClubName(clubInfo.getClubName()) != null)
-            return new Result(-20208);
+            return new Result(-20202);
 
         code = club.updateClubInfo(clubInfo);
         if (code <= 0) return new Result(code);
@@ -148,7 +149,7 @@ public class ClubController {
         try {
             if (id == null || id <= 0 ||
                     (clubInfo.getStatusCode() == 2 &&
-                            (clubInfo.getApprovalComment() == null || clubInfo.getApprovalComment().isEmpty())) ||
+                            !StringUtils.hasText(clubInfo.getApprovalComment())) ||
                     clubInfo.getStatusCode() == 0 || clubInfo.getStatusCode() == 1
             ) throw new Exception("参数逻辑错误！");
         } catch (Exception e) {

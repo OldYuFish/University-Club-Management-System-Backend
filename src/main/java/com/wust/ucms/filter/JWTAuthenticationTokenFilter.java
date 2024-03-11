@@ -1,5 +1,6 @@
 package com.wust.ucms.filter;
 
+import com.wust.ucms.pojo.LoginInfo;
 import com.wust.ucms.pojo.RSAKeyProperties;
 import com.wust.ucms.utils.JWTUtil;
 import com.wust.ucms.utils.RedisCache;
@@ -41,8 +42,14 @@ public class JWTAuthenticationTokenFilter extends OncePerRequestFilter {
             throw new RuntimeException("Token is illegal");
         }
 
-        if (Objects.isNull(redisCache.getCacheObject("login:" + userId))) {
+        LoginInfo loginInfo = redisCache.getCacheObject("login:" + userId);
+
+        if (Objects.isNull(loginInfo)) {
             throw new RuntimeException("The user is not login");
+        }
+
+        if (!Objects.equals(loginInfo.getToken(), token)) {
+            throw new RuntimeException("The incoming token is inconsistent with the token stored in redis");
         }
 
         filterChain.doFilter(request, response);

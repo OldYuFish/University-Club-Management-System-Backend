@@ -4,6 +4,7 @@ import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.Log;
 import com.wust.ucms.service.impl.LogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -29,7 +30,7 @@ public class LogController {
         try {
             if (log.getObject().length() > 12 ||
                     log.getOperate().length() > 6 ||
-                    ((log.getStudentNumber() != null && !log.getStudentNumber().isEmpty()) &&
+                    (StringUtils.hasText(log.getStudentNumber()) &&
                             log.getStudentNumber().length() != 12) ||
                     log.getTeacherNumber().length() > 24
             ) throw new Exception("参数格式错误！");

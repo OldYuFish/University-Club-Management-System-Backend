@@ -13,6 +13,7 @@ import com.wust.ucms.service.FundInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -153,11 +154,11 @@ public class FundInfoServiceImpl implements FundInfoService {
     public Map<String, Object> researchBasicFundInfo(FundInfo fundInfo) {
         LambdaQueryWrapper<FundInfo> lqw = new LambdaQueryWrapper<>();
         lqw.like(
-                fundInfo.getTheme() != null && !fundInfo.getTheme().isEmpty(),
+                StringUtils.hasText(fundInfo.getTheme()),
                 FundInfo::getTheme,
                 fundInfo.getTheme()
         ).eq(
-                fundInfo.getType() != null && !fundInfo.getType().isEmpty(),
+                StringUtils.hasText(fundInfo.getType()),
                 FundInfo::getType,
                 fundInfo.getType()
         ).eq(

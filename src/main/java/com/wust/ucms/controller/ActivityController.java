@@ -4,6 +4,7 @@ import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.ActivityInfo;
 import com.wust.ucms.service.impl.ActivityInfoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -19,9 +20,9 @@ public class ActivityController {
 
     private static Integer paramsException(ActivityInfo activityInfo) {
         try {
-            if (activityInfo.getTitle() == null || activityInfo.getTitle().isEmpty() ||
-                    activityInfo.getType() == null || activityInfo.getType().isEmpty() ||
-                    activityInfo.getAddress() == null || activityInfo.getAddress().isEmpty() ||
+            if (!StringUtils.hasText(activityInfo.getTitle()) ||
+                    !StringUtils.hasText(activityInfo.getType()) ||
+                    !StringUtils.hasText(activityInfo.getAddress()) ||
                     activityInfo.getActivityStartTime() == null ||
                     activityInfo.getActivityEndTime() == null ||
                     activityInfo.getStatusCode() == null ||
@@ -74,8 +75,8 @@ public class ActivityController {
         try {
             if ((activityInfo.getStatusCode() != 0 && activityInfo.getStatusCode() != 1) ||
                     (activityInfo.getRealNumber() != null && activityInfo.getRealNumber() != 0) ||
-                    (activityInfo.getSummarize() != null && activityInfo.getSummarize().isEmpty()) ||
-                    (activityInfo.getApprovalComment() != null && activityInfo.getApprovalComment().isEmpty()) ||
+                    StringUtils.hasText(activityInfo.getSummarize()) ||
+                    StringUtils.hasText(activityInfo.getApprovalComment()) ||
                     (activityInfo.getShouldApply() == 0 &&
                             (activityInfo.getApplicationStartTime() != null && activityInfo.getApplicationEndTime() != null)) ||
                     (activityInfo.getShouldApply() == 1 &&
@@ -117,11 +118,11 @@ public class ActivityController {
             if (activityInfo.getId() == null || activityInfo.getId() <= 0 ||
                     (activityInfo.getStatusCode() != 3 &&
                             ((activityInfo.getRealNumber() != null && activityInfo.getRealNumber() != 0) ||
-                                    (activityInfo.getSummarize() != null && activityInfo.getSummarize().isEmpty()))) ||
+                                    StringUtils.hasText(activityInfo.getSummarize()))) ||
                     ((activityInfo.getStatusCode() == 0 || activityInfo.getStatusCode() == 1) &&
-                            (activityInfo.getApprovalComment() != null && activityInfo.getApprovalComment().isEmpty())) ||
+                            StringUtils.hasText(activityInfo.getApprovalComment())) ||
                     (activityInfo.getStatusCode() ==2 &&
-                            (activityInfo.getApprovalComment() == null || !activityInfo.getApprovalComment().isEmpty())) ||
+                            !StringUtils.hasText(activityInfo.getApprovalComment())) ||
                     (activityInfo.getShouldApply() == 0 &&
                             (activityInfo.getApplicationStartTime() != null && activityInfo.getApplicationEndTime() != null)) ||
                     (activityInfo.getShouldApply() == 1 &&
@@ -145,7 +146,7 @@ public class ActivityController {
         try {
             if (id == null || id <= 0 ||
                     (activityInfo.getStatusCode() == 2 &&
-                            (activityInfo.getApprovalComment() == null || activityInfo.getApprovalComment().isEmpty())) ||
+                            !StringUtils.hasText(activityInfo.getApprovalComment())) ||
                     activityInfo.getStatusCode() == 0 || activityInfo.getStatusCode() == 1
             ) throw new Exception("参数逻辑错误！");
         } catch (Exception e) {

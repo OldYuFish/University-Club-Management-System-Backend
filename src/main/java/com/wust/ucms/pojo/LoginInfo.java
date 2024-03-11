@@ -21,4 +21,8 @@ public class LoginInfo {
     private Integer roleId;
     @TableField(exist = false)
     private String oldPassword;
+    @TableField(exist = false)
+    private String verifyCode;
+    @TableField(exist = false)
+    private String token;
 }

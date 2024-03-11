@@ -10,6 +10,7 @@ import com.wust.ucms.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -42,19 +43,19 @@ public class LogServiceImpl implements LogService {
     public Map<String, Object> researchLog(Log log) {
         LambdaQueryWrapper<Log> lqw = new LambdaQueryWrapper<>();
         lqw.eq(
-                log.getObject() != null && !log.getObject().isEmpty(),
+                StringUtils.hasText(log.getObject()),
                 Log::getObject,
                 log.getObject()
         ).eq(
-                log.getOperate() != null && !log.getOperate().isEmpty(),
+                StringUtils.hasText(log.getOperate()),
                 Log::getOperate,
                 log.getOperate()
         ).eq(
-                log.getStudentNumber() != null && !log.getStudentNumber().isEmpty() && login.selectLoginIdByStudentNumber(log.getStudentNumber()) != null,
+                StringUtils.hasText(log.getStudentNumber()) && login.selectLoginIdByStudentNumber(log.getStudentNumber()) != null,
                 Log::getLoginId,
                 login.selectLoginIdByStudentNumber(log.getStudentNumber())
         ).eq(
-                log.getTeacherNumber() != null && !log.getTeacherNumber().isEmpty() && login.selectLoginIdByTeacherNumber(log.getTeacherNumber()) != null,
+                StringUtils.hasText(log.getTeacherNumber()) && login.selectLoginIdByTeacherNumber(log.getTeacherNumber()) != null,
                 Log::getLoginId,
                 login.selectLoginIdByTeacherNumber(log.getTeacherNumber())
         );

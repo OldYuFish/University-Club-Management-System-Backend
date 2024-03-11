@@ -8,6 +8,7 @@ import com.wust.ucms.utils.MD5Util;
 import com.wust.ucms.utils.ZIPUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +34,7 @@ public class FilesController {
             @RequestParam String md5Code) {
         try {
             if (multipartFile == null ||
-                    files.getFileName() == null || files.getFileName().isEmpty() ||
+                    !StringUtils.hasText(files.getFileName()) ||
                     md5Code == null || md5Code.isEmpty()
             ) throw new Exception("缺少请求参数！");
         } catch (Exception e) {
@@ -92,7 +93,7 @@ public class FilesController {
     @PostMapping("/delete")
     public Result deleteFiles(@RequestBody Files files) {
         try {
-            if (files.getFileName() == null || files.getFileName().isEmpty()) throw new Exception("缺少参数！");
+            if (!StringUtils.hasText(files.getFileName())) throw new Exception("缺少参数！");
         } catch (Exception e) {
             return new Result(-20001);
         }
@@ -108,7 +109,7 @@ public class FilesController {
 
     @PostMapping("/research/login")
     public Result researchLoginFiles(@RequestBody LoginInfo loginInfo) {
-        if (loginInfo.getEmail() == null || loginInfo.getEmail().isEmpty()) return new Result(-20001);
+        if (!StringUtils.hasText(loginInfo.getEmail())) return new Result(-20001);
         List<String> filesList = file.researchFileNameByLoginId(loginInfo.getEmail());
         if (filesList == null) return new Result(-20003);
         Map<String, Object> data = new HashMap<>();

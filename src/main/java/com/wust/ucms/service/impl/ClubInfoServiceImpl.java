@@ -11,6 +11,7 @@ import com.wust.ucms.service.ClubInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -28,7 +29,7 @@ public class ClubInfoServiceImpl implements ClubInfoService {
     public Integer createClubInfo(ClubInfo clubInfo) {
         clubInfo.setLoginId(login.selectLoginIdByStudentNumber(clubInfo.getStudentNumber()));
         if (club.selectClubIdByLoginId(clubInfo.getLoginId()) != null)
-            return -20209;
+            return -20208;
         int flag = club.insert(clubInfo);
         if (flag > 0) return clubInfo.getId();
 
@@ -101,19 +102,19 @@ public class ClubInfoServiceImpl implements ClubInfoService {
     public Map<String, Object> researchBasicClubInfo(ClubInfo clubInfo) {
         LambdaQueryWrapper<ClubInfo> lqw = new LambdaQueryWrapper<>();
         lqw.like(
-                clubInfo.getClubName() != null && !clubInfo.getClubName().isEmpty(),
+                StringUtils.hasText(clubInfo.getClubName()),
                 ClubInfo::getClubName,
                 clubInfo.getClubName()
         ).eq(
-                clubInfo.getType() != null && !clubInfo.getType().isEmpty(),
+                StringUtils.hasText(clubInfo.getType()),
                 ClubInfo::getType,
                 clubInfo.getType()
         ).eq(
-                clubInfo.getClubLevel() != null && !clubInfo.getClubLevel().isEmpty(),
+                StringUtils.hasText(clubInfo.getClubLevel()),
                 ClubInfo::getClubLevel,
                 clubInfo.getClubLevel()
         ).like(
-                clubInfo.getDepartment() != null && !clubInfo.getDepartment().isEmpty(),
+                StringUtils.hasText(clubInfo.getDepartment()),
                 ClubInfo::getDepartment,
                 clubInfo.getDepartment()
         ).eq(
@@ -136,7 +137,7 @@ public class ClubInfoServiceImpl implements ClubInfoService {
             map.put("clubName", c.getClubName());
             map.put("type", c.getType());
             map.put("clubLevel", c.getClubLevel());
-            map.put("department", c.getDepartment() == null || c.getDepartment().isEmpty() ? "--" : c.getDepartment());
+            map.put("department", !StringUtils.hasText(c.getDepartment()) ? "--" : c.getDepartment());
             map.put("statusCode", c.getStatusCode());
             map.put("realName", login.selectById(c.getLoginId()).getRealName());
             clubList.add(map);
