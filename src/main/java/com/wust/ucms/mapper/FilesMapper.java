@@ -15,13 +15,13 @@ public interface FilesMapper extends BaseMapper<Files> {
     int deleteFileByFileName(String fileName);
 
     @Select("select file_name from files where login_id = #{loginId}")
-    List<String> selectFileNameByLoginId(Integer loginId);
+    String selectFileNameByLoginId(Integer loginId);
 
     @Select("select file_name from files where club_id = #{clubId}")
     List<String> selectFileNameByClubId(Integer clubId);
 
     @Select("select file_name from files where member_id = #{memberId}")
-    List<String> selectFileNameByMemberId(Integer memberId);
+    String selectFileNameByMemberId(Integer memberId);
 
     @Select("select file_name from files where activity_id = #{activityId}")
     List<String> selectFileNameByActivityId(Integer activityId);

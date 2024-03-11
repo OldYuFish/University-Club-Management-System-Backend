@@ -14,9 +14,9 @@ public interface FilesService {
     Integer deleteFiles(String fileName);
     Integer removeFiles(String fileName);
     void downloadFiles(OutputStream os, String filePath) throws IOException;
-    List<String> researchFileNameByLoginId(String email);
+    String researchFileNameByLoginId(String email);
     List<String> researchFileNameByClubId(Integer clubId);
-    List<String> researchFileNameByMemberId(String studentNumber);
+    String researchFileNameByMemberId(String studentNumber);
     List<String> researchFileNameByActivityId(Integer activityId);
     List<String> researchFileNameByFundId(Integer fundId);
 

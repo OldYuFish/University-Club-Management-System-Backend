@@ -89,7 +89,7 @@ public class FilesServiceImpl implements FilesService {
     }
 
     @Override
-    public List<String> researchFileNameByLoginId(String email) {
+    public String researchFileNameByLoginId(String email) {
         Integer loginId = login.selectLoginIdByEmail(email);
         if (loginId > 0) return file.selectFileNameByLoginId(loginId);
 
@@ -102,7 +102,7 @@ public class FilesServiceImpl implements FilesService {
     }
 
     @Override
-    public List<String> researchFileNameByMemberId(String studentNumber) {
+    public String researchFileNameByMemberId(String studentNumber) {
         Integer memberId = member.selectMemberIdByStudentNumber(studentNumber);
         if (memberId > 0) return file.selectFileNameByMemberId(memberId);
 

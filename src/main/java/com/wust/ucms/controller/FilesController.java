@@ -107,15 +107,25 @@ public class FilesController {
         return new Result(flag);
     }
 
-    @PostMapping("/research/login")
-    public Result researchLoginFiles(@RequestBody LoginInfo loginInfo) {
-        if (!StringUtils.hasText(loginInfo.getEmail())) return new Result(-20001);
-        List<String> filesList = file.researchFileNameByLoginId(loginInfo.getEmail());
-        if (filesList == null) return new Result(-20003);
-        Map<String, Object> data = new HashMap<>();
-        data.put("filesList", filesList);
+    @GetMapping("/research/login")
+    public Result researchLoginFiles(HttpServletResponse response, String email) throws IOException {
+        if (!StringUtils.hasText(email)) return new Result(-20001);
+        String fileName = file.researchFileNameByLoginId(email);
+        if (!StringUtils.hasText(fileName)) return new Result(-20000);
 
-        return new Result(0, data);
+        File location = FileUtil.getURL();
+        String targetFile = new File(location, fileName).getPath();
+        String fileType = targetFile.substring(targetFile.lastIndexOf(".")+1);
+
+        response.reset();
+        response.setContentType("image/"+fileType);
+
+        response.setHeader("Content-Disposition",
+                "attachment;filename=" + Arrays.toString(targetFile.getBytes(StandardCharsets.UTF_8)));
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        file.downloadFiles(response.getOutputStream(), targetFile);
+
+        return new Result(0);
     }
 
     @PostMapping("/research/club")
@@ -128,26 +138,47 @@ public class FilesController {
         return new Result(0, data);
     }
 
-    @PostMapping("/research/member")
-    public Result researchMemberFiles(@RequestBody MemberInfo memberInfo) {
-        if (memberInfo.getStudentNumber() == null || memberInfo.getStudentNumber().isEmpty())
-            return new Result(-20001);
-        List<String> filesList = file.researchFileNameByMemberId(memberInfo.getStudentNumber());
-        if (filesList == null) return new Result(-20003);
-        Map<String, Object> data = new HashMap<>();
-        data.put("filesList", filesList);
+    @GetMapping("/research/member")
+    public Result researchMemberFiles(HttpServletResponse response, String studentNumber) throws IOException {
+        if (!StringUtils.hasText(studentNumber)) return new Result(-20001);
+        String fileName = file.researchFileNameByMemberId(studentNumber);
+        if (!StringUtils.hasText(fileName)) return new Result(-20000);
 
-        return new Result(0, data);
+        File location = FileUtil.getURL();
+        String targetFile = new File(location, fileName).getPath();
+        String fileType = targetFile.substring(targetFile.lastIndexOf(".")+1);
+
+        response.reset();
+        response.setContentType("image/"+fileType);
+
+        response.setHeader("Content-Disposition",
+                "attachment;filename=" + Arrays.toString(targetFile.getBytes(StandardCharsets.UTF_8)));
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        file.downloadFiles(response.getOutputStream(), targetFile);
+
+        return new Result(0);
     }
 
-    @PostMapping("/research/activity")
-    public Result researchActivityFiles(@RequestBody ActivityInfo activityInfo) {
-        if (activityInfo.getId() == null) return new Result(-20001);
-        List<String> filesList = file.researchFileNameByActivityId(activityInfo.getId());
-        Map<String, Object> data = new HashMap<>();
-        data.put("filesList", filesList);
+    @GetMapping("/research/activity")
+    public Result researchActivityFiles(HttpServletResponse response, Integer activityId) throws IOException {
+        if (activityId == null) return new Result(-20001);
+        List<String> fileNameList = file.researchFileNameByActivityId(activityId);
+        if (fileNameList == null) return new Result(-20000);
+        for (String fileName : fileNameList) {
+            File location = FileUtil.getURL();
+            String targetFile = new File(location, fileName).getPath();
+            String fileType = targetFile.substring(targetFile.lastIndexOf(".")+1);
 
-        return new Result(0, data);
+            response.reset();
+            response.setContentType("image/"+fileType);
+
+            response.setHeader("Content-Disposition",
+                    "attachment;filename=" + Arrays.toString(targetFile.getBytes(StandardCharsets.UTF_8)));
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            file.downloadFiles(response.getOutputStream(), targetFile);
+        }
+
+        return new Result(0);
     }
 
     @PostMapping("/research/fund")
@@ -162,7 +193,7 @@ public class FilesController {
 
     @GetMapping("/download")
     public Result downloadFile(HttpServletResponse response, String fileName) throws IOException {
-        if (fileName == null || fileName.isEmpty()) return new Result(-20000);
+        if (!StringUtils.hasText(fileName)) return new Result(-20000);
 
         File location = FileUtil.getURL();
         String targetFile = new File(location, fileName).getPath();
