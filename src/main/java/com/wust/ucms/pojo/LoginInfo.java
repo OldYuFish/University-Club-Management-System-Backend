@@ -22,6 +22,8 @@ public class LoginInfo {
     @TableField(exist = false)
     private String oldPassword;
     @TableField(exist = false)
+    private String oldEmail;
+    @TableField(exist = false)
     private String connectionId;
     @TableField(exist = false)
     private String verifyCode;

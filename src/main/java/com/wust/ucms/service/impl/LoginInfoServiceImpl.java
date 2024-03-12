@@ -115,13 +115,8 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 
     @Override
     public Integer updatePassword(LoginInfo loginInfo) {
-        Integer loginId = loginInfo.getId();
-        String password = loginInfo.getPassword();
-
-        LoginInfo loginInformation = login.selectById(loginId);
-        loginInformation.setPassword(password);
-        int flag = login.updateById(loginInformation);
-        if (flag > 0) return loginId;
+        int flag = login.updateById(loginInfo);
+        if (flag > 0) return 0;
 
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
@@ -130,15 +125,12 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 
     @Override
     public Integer updatePhone(LoginInfo loginInfo) {
-        Integer loginId = loginInfo.getId();
         String phone = loginInfo.getPhone();
 
         if (login.selectLoginIdByPhone(phone) != null) return -20201;
 
-        LoginInfo loginInformation = login.selectById(loginId);
-        loginInformation.setPhone(phone);
-        int flag = login.updateById(loginInformation);
-        if (flag > 0) return loginId;
+        int flag = login.updateById(loginInfo);
+        if (flag > 0) return 0;
 
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
@@ -147,15 +139,12 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 
     @Override
     public Integer updateEmail(LoginInfo loginInfo) {
-        Integer loginId = loginInfo.getId();
         String email = loginInfo.getEmail();
 
         if (login.selectLoginIdByEmail(email) != null) return -20201;
 
-        LoginInfo loginInformation = login.selectById(loginId);
-        loginInformation.setEmail(email);
-        int flag = login.updateById(loginInformation);
-        if (flag > 0) return loginId;
+        int flag = login.updateById(loginInfo);
+        if (flag > 0) return 0;
 
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
@@ -167,10 +156,12 @@ public class LoginInfoServiceImpl implements LoginInfoService {
         Integer loginId = loginInfo.getId();
         Integer roleId = loginInfo.getRoleId();
 
+        if (role.selectById(roleId) == null) return -20209;
+
         LoginInfo loginInformation = login.selectById(loginId);
         loginInformation.setRoleId(roleId);
         int flag = login.updateById(loginInformation);
-        if (flag > 0) return loginId;
+        if (flag > 0) return 0;
 
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 

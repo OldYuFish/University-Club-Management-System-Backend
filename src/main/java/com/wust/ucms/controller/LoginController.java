@@ -200,27 +200,82 @@ public class LoginController {
 
     @PostMapping("/retrieve")
     public Result retrieve(@RequestBody LoginInfo loginInfo) {
-        return null;
+        String email = loginInfo.getEmail();
+        String password = loginInfo.getPassword();
+        String verifyCode = loginInfo.getVerifyCode();
+        String connectionId = loginInfo.getConnectionId();
+        if (!StringUtils.hasText(email) ||
+                !StringUtils.hasText(password) ||
+                !StringUtils.hasText(verifyCode) ||
+                !StringUtils.hasText(connectionId)) return new Result(-20001);
+
+        Map<String, Object> verifyInfo = redis.getCacheObject(connectionId);
+        if (verifyCode != verifyInfo.get("code")) return new Result(-20207);
+
+        loginInfo = login.researchDetail(email);
+        if (loginInfo == null) return new Result(-20203);
+
+        loginInfo.setPassword(passwordEncoder.encode(password));
+        Integer code = login.updatePassword(loginInfo);
+        return new Result(code);
     }
 
     @PostMapping("/update/password")
     public Result updatePassword(@RequestBody LoginInfo loginInfo) {
-        return null;
+        String password = loginInfo.getPassword();
+        String oldPassword = loginInfo.getOldPassword();
+        String email = loginInfo.getEmail();
+        if (!StringUtils.hasText(password) ||
+                !StringUtils.hasText(oldPassword) ||
+                !StringUtils.hasText(email)) return new Result(-20001);
+
+        loginInfo = login.researchDetail(email);
+        if (loginInfo == null) return new Result(-20203);
+        if (!passwordEncoder.matches(oldPassword, loginInfo.getPassword())) return new Result(-20204);
+        loginInfo.setPassword(passwordEncoder.encode(password));
+        Integer code = login.updatePassword(loginInfo);
+        return new Result(code);
     }
 
     @PostMapping("/update/phone")
     public Result updatePhone(@RequestBody LoginInfo loginInfo) {
-        return null;
+        String password = loginInfo.getPassword();
+        String phone = loginInfo.getPhone();
+        String email = loginInfo.getEmail();
+        if (!StringUtils.hasText(password) ||
+                !StringUtils.hasText(phone) ||
+                !StringUtils.hasText(email)) return new Result(-20001);
+
+        loginInfo = login.researchDetail(email);
+        if (loginInfo == null) return new Result(-20203);
+        if (!passwordEncoder.matches(password, loginInfo.getPassword())) return new Result(-20204);
+        loginInfo.setPhone(phone);
+        Integer code = login.updatePhone(loginInfo);
+        return new Result(code);
     }
 
     @PostMapping("/update/email")
     public Result updateEmail(@RequestBody LoginInfo loginInfo) {
-        return null;
+        String password = loginInfo.getPassword();
+        String email = loginInfo.getEmail();
+        String oldEmail = loginInfo.getOldEmail();
+        if (!StringUtils.hasText(password) ||
+                !StringUtils.hasText(email) ||
+                !StringUtils.hasText(oldEmail)) return new Result(-20001);
+
+        loginInfo = login.researchDetail(oldEmail);
+        if (loginInfo == null) return new Result(-20203);
+        if (!passwordEncoder.matches(password, loginInfo.getPassword())) return new Result(-20204);
+        loginInfo.setEmail(email);
+        Integer code = login.updateEmail(loginInfo);
+        return new Result(code);
     }
 
     @PostMapping("/update/role")
     public Result updateRole(@RequestBody LoginInfo loginInfo) {
-        return null;
+        if (loginInfo.getId() == null || loginInfo.getRoleId() == null) return new Result(-20001);
+        Integer code = login.updateRoleId(loginInfo);
+        return new Result(code);
     }
 
     @PostMapping("/login")
