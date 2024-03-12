@@ -6,12 +6,15 @@ import com.wust.ucms.service.impl.FilesServiceImpl;
 import com.wust.ucms.utils.FileUtil;
 import com.wust.ucms.utils.MD5Util;
 import com.wust.ucms.utils.ZIPUtil;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -113,17 +116,24 @@ public class FilesController {
         String fileName = file.researchFileNameByLoginId(email);
         if (!StringUtils.hasText(fileName)) return new Result(-20000);
 
-        File location = FileUtil.getURL();
-        String targetFile = new File(location, fileName).getPath();
-        String fileType = targetFile.substring(targetFile.lastIndexOf(".")+1);
+        response.setDateHeader("Expires", 0);
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+        response.setHeader("Pragma", "no-cache");
 
-        response.reset();
+        File location = FileUtil.getURL();
+        File targetFile = new File(location, fileName);
+        String fileType = targetFile.getPath().substring(targetFile.getPath().lastIndexOf(".")+1);
         response.setContentType("image/"+fileType);
 
-        response.setHeader("Content-Disposition",
-                "attachment;filename=" + Arrays.toString(targetFile.getBytes(StandardCharsets.UTF_8)));
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        file.downloadFiles(response.getOutputStream(), targetFile);
+        ServletOutputStream out = response.getOutputStream();
+        BufferedImage bufferedImage = ImageIO.read(targetFile);
+        ImageIO.write(bufferedImage, fileType, out);
+        try {
+            out.flush();
+        } finally {
+            out.close();
+        }
 
         return new Result(0);
     }
@@ -144,17 +154,24 @@ public class FilesController {
         String fileName = file.researchFileNameByMemberId(studentNumber);
         if (!StringUtils.hasText(fileName)) return new Result(-20000);
 
-        File location = FileUtil.getURL();
-        String targetFile = new File(location, fileName).getPath();
-        String fileType = targetFile.substring(targetFile.lastIndexOf(".")+1);
+        response.setDateHeader("Expires", 0);
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+        response.setHeader("Pragma", "no-cache");
 
-        response.reset();
+        File location = FileUtil.getURL();
+        File targetFile = new File(location, fileName);
+        String fileType = targetFile.getPath().substring(targetFile.getPath().lastIndexOf(".")+1);
         response.setContentType("image/"+fileType);
 
-        response.setHeader("Content-Disposition",
-                "attachment;filename=" + Arrays.toString(targetFile.getBytes(StandardCharsets.UTF_8)));
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        file.downloadFiles(response.getOutputStream(), targetFile);
+        ServletOutputStream out = response.getOutputStream();
+        BufferedImage bufferedImage = ImageIO.read(targetFile);
+        ImageIO.write(bufferedImage, fileType, out);
+        try {
+            out.flush();
+        } finally {
+            out.close();
+        }
 
         return new Result(0);
     }
@@ -164,18 +181,26 @@ public class FilesController {
         if (activityId == null) return new Result(-20001);
         List<String> fileNameList = file.researchFileNameByActivityId(activityId);
         if (fileNameList == null) return new Result(-20000);
+
+        response.setDateHeader("Expires", 0);
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+        response.setHeader("Pragma", "no-cache");
+
         for (String fileName : fileNameList) {
             File location = FileUtil.getURL();
-            String targetFile = new File(location, fileName).getPath();
-            String fileType = targetFile.substring(targetFile.lastIndexOf(".")+1);
-
-            response.reset();
+            File targetFile = new File(location, fileName);
+            String fileType = targetFile.getPath().substring(targetFile.getPath().lastIndexOf(".")+1);
             response.setContentType("image/"+fileType);
 
-            response.setHeader("Content-Disposition",
-                    "attachment;filename=" + Arrays.toString(targetFile.getBytes(StandardCharsets.UTF_8)));
-            response.setHeader("Access-Control-Allow-Origin", "*");
-            file.downloadFiles(response.getOutputStream(), targetFile);
+            ServletOutputStream out = response.getOutputStream();
+            BufferedImage bufferedImage = ImageIO.read(targetFile);
+            ImageIO.write(bufferedImage, fileType, out);
+            try {
+                out.flush();
+            } finally {
+                out.close();
+            }
         }
 
         return new Result(0);

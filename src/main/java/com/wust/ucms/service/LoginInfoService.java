@@ -8,8 +8,10 @@ public interface LoginInfoService {
     Integer createUser(LoginInfo loginInfo);
     Integer logicalDeleteUser(Integer loginId);
     Integer logout(Integer loginId);
-    Integer update(LoginInfo loginInfo);
-    Integer verify(LoginInfo loginInfo);
-    LoginInfo researchDetail(LoginInfo loginInfo);
+    Integer updatePassword(LoginInfo loginInfo);
+    Integer updatePhone(LoginInfo loginInfo);
+    Integer updateEmail(LoginInfo loginInfo);
+    Integer updateRoleId(LoginInfo loginInfo);
+    LoginInfo researchDetail(String email);
     Map<String, Object> researchBasic(LoginInfo loginInfo);
 }

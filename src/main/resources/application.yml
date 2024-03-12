@@ -37,6 +37,27 @@ spring:
       timeout: 10000
   jackson:
     time-zone: GMT+8
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: oldyufish@163.com
+    password: RSPYCRSRFWGEKUAL
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+            socketFactory:
+              port: 465
+              class: javax.net.ssl.SSLSocketFactory
+        debug: false
+    from: oldyufish@163.com
+    protocol: smtp
 
 logging:
   level:

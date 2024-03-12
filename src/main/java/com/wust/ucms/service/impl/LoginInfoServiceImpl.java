@@ -1,13 +1,19 @@
 package com.wust.ucms.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wust.ucms.mapper.LoginInfoMapper;
+import com.wust.ucms.mapper.UserRoleMapper;
 import com.wust.ucms.pojo.LoginInfo;
 import com.wust.ucms.service.LoginInfoService;
 import com.wust.ucms.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +22,9 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 
     @Autowired
     LoginInfoMapper login;
+
+    @Autowired
+    UserRoleMapper role;
 
     @Autowired
     RedisCache redis;
@@ -106,22 +115,118 @@ public class LoginInfoServiceImpl implements LoginInfoService {
     }
 
     @Override
-    public Integer update(LoginInfo loginInfo) {
-        return null;
+    public Integer updatePassword(LoginInfo loginInfo) {
+        Integer loginId = loginInfo.getId();
+        String password = loginInfo.getPassword();
+
+        LoginInfo loginInformation = login.selectById(loginId);
+        loginInformation.setPassword(password);
+        int flag = login.updateById(loginInformation);
+        if (flag > 0) return loginId;
+
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+        return -20003;
     }
 
     @Override
-    public Integer verify(LoginInfo loginInfo) {
-        return null;
+    public Integer updatePhone(LoginInfo loginInfo) {
+        Integer loginId = loginInfo.getId();
+        String phone = loginInfo.getPhone();
+
+        LoginInfo loginInformation = login.selectById(loginId);
+        loginInformation.setPhone(phone);
+        int flag = login.updateById(loginInformation);
+        if (flag > 0) return loginId;
+
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+        return -20003;
     }
 
     @Override
-    public LoginInfo researchDetail(LoginInfo loginInfo) {
-        return null;
+    public Integer updateEmail(LoginInfo loginInfo) {
+        Integer loginId = loginInfo.getId();
+        String email = loginInfo.getEmail();
+
+        LoginInfo loginInformation = login.selectById(loginId);
+        loginInformation.setEmail(email);
+        int flag = login.updateById(loginInformation);
+        if (flag > 0) return loginId;
+
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+        return -20003;
+    }
+
+    @Override
+    public Integer updateRoleId(LoginInfo loginInfo) {
+        Integer loginId = loginInfo.getId();
+        Integer roleId = loginInfo.getRoleId();
+
+        LoginInfo loginInformation = login.selectById(loginId);
+        loginInformation.setRoleId(roleId);
+        int flag = login.updateById(loginInformation);
+        if (flag > 0) return loginId;
+
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+        return -20003;
+    }
+
+    @Override
+    public LoginInfo researchDetail(String email) {
+        Integer loginId = login.selectLoginIdByEmail(email);
+
+        return login.selectById(loginId);
     }
 
     @Override
     public Map<String, Object> researchBasic(LoginInfo loginInfo) {
-        return null;
+        LambdaQueryWrapper<LoginInfo> lqw = new LambdaQueryWrapper<>();
+        lqw.like(
+                StringUtils.hasText(loginInfo.getRealName()),
+                LoginInfo::getRealName,
+                loginInfo.getRealName()
+        ).like(
+                StringUtils.hasText(loginInfo.getStudentNumber()),
+                LoginInfo::getStudentNumber,
+                loginInfo.getStudentNumber()
+        ).like(
+                StringUtils.hasText(loginInfo.getTeacherNumber()),
+                LoginInfo::getTeacherNumber,
+                loginInfo.getTeacherNumber()
+        ).like(
+                StringUtils.hasText(loginInfo.getPhone()),
+                LoginInfo::getPhone,
+                loginInfo.getPhone()
+        ).like(
+                StringUtils.hasText(loginInfo.getEmail()),
+                LoginInfo::getEmail,
+                loginInfo.getEmail()
+        ).eq(
+                loginInfo.getIsDelete() != null,
+                LoginInfo::getIsDelete,
+                loginInfo.getIsDelete()
+        ).eq(
+                role.selectRoleIdByRoleName(loginInfo.getRoleName()) != null,
+                LoginInfo::getRoleId,
+                role.selectRoleIdByRoleName(loginInfo.getRoleName())
+        );
+
+        IPage<LoginInfo> page = new Page<>(loginInfo.getPageIndex(), loginInfo.getPageSize());
+        login.selectPage(page, lqw);
+
+        Map<String, Object> pagination = new HashMap<>();
+        pagination.put("total", page.getTotal());
+        pagination.put("pageIndex", loginInfo.getPageIndex());
+        pagination.put("pageSize", loginInfo.getPageSize());
+
+        List<LoginInfo> loginList = page.getRecords();
+        Map<String, Object> data = new HashMap<>();
+        data.put("loginList", loginList);
+        data.put("pagination", pagination);
+
+        return data;
     }
 }

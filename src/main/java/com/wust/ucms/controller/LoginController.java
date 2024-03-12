@@ -29,11 +29,6 @@ public class LoginController {
         return null;
     }
 
-    @PostMapping("/update/basic")
-    public Result updateBasic(@RequestBody LoginInfo loginInfo) {
-        return null;
-    }
-
     @PostMapping("/update/password")
     public Result updatePassword(@RequestBody LoginInfo loginInfo) {
         return null;

@@ -25,4 +25,10 @@ public class LoginInfo {
     private String verifyCode;
     @TableField(exist = false)
     private String token;
+    @TableField(exist = false)
+    private String roleName;
+    @TableField(exist = false)
+    private Long pageIndex;
+    @TableField(exist = false)
+    private Long pageSize;
 }
