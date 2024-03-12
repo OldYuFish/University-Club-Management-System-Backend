@@ -103,14 +103,14 @@ public class RedisCache {
     }
 
     public boolean set(String key,Object value,long time){
-        try{
-            if(time > 0){
+        try {
+            if (time > 0) {
                 redisTemplate.opsForValue().set(key,value,time,TimeUnit.SECONDS);
-            }else{
+            } else {
                 redisTemplate.opsForValue().set(key,value);
             }
             return true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             return false;
         }

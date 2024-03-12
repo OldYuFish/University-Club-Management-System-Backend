@@ -5,10 +5,14 @@ import com.wust.ucms.pojo.LoginInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
 public interface LoginInfoMapper extends BaseMapper<LoginInfo> {
+
+    @Select("select now()")
+    Date selectDateFromSQL();
 
     @Select("select id from login_info where email = #{email}")
     Integer selectLoginIdByEmail(String email);

@@ -30,6 +30,11 @@ public class LoginInfoServiceImpl implements LoginInfoService {
     RedisCache redis;
 
     @Override
+    public Long selectDateFromSQL() {
+        return login.selectDateFromSQL().getTime();
+    }
+
+    @Override
     public Integer createUser(LoginInfo loginInfo) {
         String studentNumber = loginInfo.getStudentNumber();
         String teacherNumber = loginInfo.getTeacherNumber();
@@ -109,12 +114,6 @@ public class LoginInfoServiceImpl implements LoginInfoService {
     }
 
     @Override
-    public Integer logout(Integer loginId) {
-        redis.deleteObject("login:" + loginId.toString());
-        return 0;
-    }
-
-    @Override
     public Integer updatePassword(LoginInfo loginInfo) {
         Integer loginId = loginInfo.getId();
         String password = loginInfo.getPassword();
@@ -134,6 +133,8 @@ public class LoginInfoServiceImpl implements LoginInfoService {
         Integer loginId = loginInfo.getId();
         String phone = loginInfo.getPhone();
 
+        if (login.selectLoginIdByPhone(phone) != null) return -20201;
+
         LoginInfo loginInformation = login.selectById(loginId);
         loginInformation.setPhone(phone);
         int flag = login.updateById(loginInformation);
@@ -148,6 +149,8 @@ public class LoginInfoServiceImpl implements LoginInfoService {
     public Integer updateEmail(LoginInfo loginInfo) {
         Integer loginId = loginInfo.getId();
         String email = loginInfo.getEmail();
+
+        if (login.selectLoginIdByEmail(email) != null) return -20201;
 
         LoginInfo loginInformation = login.selectById(loginId);
         loginInformation.setEmail(email);
