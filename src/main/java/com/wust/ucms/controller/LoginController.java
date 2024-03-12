@@ -1,7 +1,11 @@
 package com.wust.ucms.controller;
 
+import com.google.code.kaptcha.Producer;
 import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.LoginInfo;
+import com.wust.ucms.service.impl.LoginInfoServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -9,8 +13,27 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class LoginController {
 
+    @Autowired
+    LoginInfoServiceImpl login;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    Producer captcha;
+
     @PostMapping("/register")
     public Result register(@RequestBody LoginInfo loginInfo) {
+        return null;
+    }
+
+    @PostMapping("/verify")
+    public Result verify(@RequestBody LoginInfo loginInfo) {
+        return null;
+    }
+
+    @PostMapping("/cid")
+    public Result connectionId(@RequestBody LoginInfo loginInfo) {
         return null;
     }
 
