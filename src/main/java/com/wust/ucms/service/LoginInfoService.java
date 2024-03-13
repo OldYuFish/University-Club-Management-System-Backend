@@ -7,6 +7,7 @@ import java.util.Map;
 
 public interface LoginInfoService {
     Long selectDateFromSQL();
+    Integer setSecretKey(String secretKey, LoginInfo loginInfo);
     Integer createUser(LoginInfo loginInfo);
     Integer logicalDeleteUser(Integer loginId);
     Integer updatePassword(LoginInfo loginInfo);
@@ -14,5 +15,6 @@ public interface LoginInfoService {
     Integer updateEmail(LoginInfo loginInfo);
     Integer updateRoleId(LoginInfo loginInfo);
     LoginInfo researchDetail(String email);
+    LoginInfo researchDetailByPhone(String phone);
     Map<String, Object> researchBasic(LoginInfo loginInfo);
 }

@@ -17,6 +17,7 @@ public class LoginInfo {
     private String teacherNumber;
     private String phone;
     private String email;
+    private String secretKey;
     private Integer isDelete;
     private Integer roleId;
     @TableField(exist = false)

@@ -35,6 +35,17 @@ public class LoginInfoServiceImpl implements LoginInfoService {
     }
 
     @Override
+    public Integer setSecretKey(String secretKey, LoginInfo loginInfo) {
+        loginInfo.setSecretKey(secretKey);
+        int flag = login.updateById(loginInfo);
+        if (flag > 0) return 0;
+
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+        return -20003;
+    }
+
+    @Override
     public Integer createUser(LoginInfo loginInfo) {
         String studentNumber = loginInfo.getStudentNumber();
         String teacherNumber = loginInfo.getTeacherNumber();
@@ -171,6 +182,13 @@ public class LoginInfoServiceImpl implements LoginInfoService {
     @Override
     public LoginInfo researchDetail(String email) {
         Integer loginId = login.selectLoginIdByEmail(email);
+
+        return login.selectById(loginId);
+    }
+
+    @Override
+    public LoginInfo researchDetailByPhone(String phone) {
+        Integer loginId = login.selectLoginIdByPhone(phone);
 
         return login.selectById(loginId);
     }

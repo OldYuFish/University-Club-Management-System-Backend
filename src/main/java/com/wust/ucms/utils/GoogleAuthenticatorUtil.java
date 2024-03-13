@@ -30,7 +30,7 @@ public class GoogleAuthenticatorUtil {
     }
 
     @SneakyThrows
-    public static String createKeyUri(String secret, String account, String issuer) throws UnsupportedEncodingException {
+    public static String createKeyUri(String secret, String account, String issuer) {
         String qrCodeStr = "otpauth://totp/${issuer}:${account}?secret=${secret}&issuer=${issuer}";
         ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
         mapBuilder.put("account", URLEncoder.encode(account, StandardCharsets.UTF_8).replace("+", "%20"));
