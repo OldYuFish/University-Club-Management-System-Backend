@@ -5,11 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("page")
-public class Page {
+@TableName("page_permission")
+public class PagePermission {
     @TableId
     private Integer id;
-    private String pageName;
-    private Integer parentId;
-    private String url;
+    private Integer pageId;
+    private Integer permissionId;
 }
