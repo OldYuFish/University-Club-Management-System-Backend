@@ -182,6 +182,7 @@ public class FundInfoServiceImpl implements FundInfoService {
         List<Map<String, Object>> fundList = new ArrayList<>();
         for (FundInfo f : page.getRecords()) {
             Map<String, Object> map = new HashMap<>();
+            map.put("id", f.getId());
             map.put("theme", f.getTheme());
             map.put("type", f.getType());
             map.put("amount", f.getAmount());

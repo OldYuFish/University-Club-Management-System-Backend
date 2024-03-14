@@ -129,6 +129,7 @@ public class ActivityInfoServiceImpl implements ActivityInfoService {
         List<Map<String, Object>> activityList = new ArrayList<>();
         for (ActivityInfo a : page.getRecords()) {
             Map<String, Object> map = new HashMap<>();
+            map.put("id", a.getId());
             map.put("title", a.getTitle());
             map.put("clubName", club.selectById(a.getClubId()).getClubName());
             map.put("type", a.getType());

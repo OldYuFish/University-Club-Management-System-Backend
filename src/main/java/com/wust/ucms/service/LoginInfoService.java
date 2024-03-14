@@ -3,6 +3,7 @@ package com.wust.ucms.service;
 import com.wust.ucms.pojo.LoginInfo;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public interface LoginInfoService {
@@ -16,5 +17,6 @@ public interface LoginInfoService {
     Integer updateRoleId(LoginInfo loginInfo);
     LoginInfo researchDetail(String email);
     LoginInfo researchDetailByPhone(String phone);
+    List<LoginInfo> researchLoginInfoByRoleId(Integer roleId);
     Map<String, Object> researchBasic(LoginInfo loginInfo);
 }

@@ -134,6 +134,7 @@ public class ClubInfoServiceImpl implements ClubInfoService {
         List<Map<String, Object>> clubList = new ArrayList<>();
         for (ClubInfo c: page.getRecords()) {
             Map<String, Object> map = new HashMap<>();
+            map.put("id", c.getId());
             map.put("clubName", c.getClubName());
             map.put("type", c.getType());
             map.put("clubLevel", c.getClubLevel());

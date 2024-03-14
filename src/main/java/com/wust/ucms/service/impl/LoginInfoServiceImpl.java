@@ -115,6 +115,7 @@ public class LoginInfoServiceImpl implements LoginInfoService {
             loginInfo.setStudentNumber(loginInfo.getStudentNumber().replace("0", "O").replace("1", "I"));
         else loginInfo.setTeacherNumber(loginInfo.getTeacherNumber().replace("0", "O").replace("1", "I"));
         loginInfo.setIsDelete(1);
+        loginInfo.setRoleId(0);
 
         int flag = login.updateById(loginInfo);
         if (flag > 0) return 0;
@@ -191,6 +192,11 @@ public class LoginInfoServiceImpl implements LoginInfoService {
         Integer loginId = login.selectLoginIdByPhone(phone);
 
         return login.selectById(loginId);
+    }
+
+    @Override
+    public List<LoginInfo> researchLoginInfoByRoleId(Integer roleId) {
+        return login.selectLoginInfoByRoleId(roleId);
     }
 
     @Override

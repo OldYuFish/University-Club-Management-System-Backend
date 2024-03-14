@@ -5,6 +5,7 @@ import com.google.zxing.WriterException;
 import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.LoginInfo;
 import com.wust.ucms.pojo.RSAKeyProperties;
+import com.wust.ucms.pojo.UserRole;
 import com.wust.ucms.pojo.VerifyInfo;
 import com.wust.ucms.service.impl.LoginInfoServiceImpl;
 import com.wust.ucms.utils.*;
@@ -108,11 +109,9 @@ public class LoginController {
         BufferedImage bufferedImage = captcha.createImage(capText);
         ServletOutputStream out = response.getOutputStream();
 
-        ImageIO.write(bufferedImage, "jpg", out);
-        try {
+        try (out) {
+            ImageIO.write(bufferedImage, "jpg", out);
             out.flush();
-        } finally {
-            out.close();
         }
 
         return new Result(0);
@@ -318,7 +317,6 @@ public class LoginController {
 
     @PostMapping("/login")
     public Result login(@RequestBody LoginInfo loginInfo) throws Exception {
-        // TODO 1、比对用户名和密码；2、比对Google二次验证码；3、登录成功申请token和redis并存储基本信息
         String phone = loginInfo.getPhone();
         String email = loginInfo.getEmail();
         String password = loginInfo.getPassword();

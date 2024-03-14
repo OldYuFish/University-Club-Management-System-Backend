@@ -28,4 +28,7 @@ public interface LoginInfoMapper extends BaseMapper<LoginInfo> {
 
     @Select("select * from login_info where is_delete = 1")
     List<LoginInfo> selectDeleteLoginInfo();
+
+    @Select("select * from login_info where  role_id = #{roleId}")
+    List<LoginInfo> selectLoginInfoByRoleId(Integer roleId);
 }
