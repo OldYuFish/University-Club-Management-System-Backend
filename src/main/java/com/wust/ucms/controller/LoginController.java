@@ -1,5 +1,6 @@
 package com.wust.ucms.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.code.kaptcha.Producer;
 import com.google.zxing.WriterException;
 import com.wust.ucms.controller.utils.Result;
@@ -81,10 +82,10 @@ public class LoginController {
             return new Result(-20006);
         }
 
-        VerifyInfo verifyInfo = redis.getCacheObject(loginInfo.getConnectionId());
+        JSONObject o = redis.getCacheObject(loginInfo.getConnectionId());
+        VerifyInfo verifyInfo = o.toJavaObject(VerifyInfo.class);
 
         if (!Objects.equals(verifyInfo.getCaptcha().getCode(), loginInfo.getVerifyCode())) return new Result(-20207);
-
         loginInfo.setPassword(passwordEncoder.encode(loginInfo.getPassword()));
         loginInfo.setIsDelete(0);
 
@@ -107,7 +108,7 @@ public class LoginController {
         String capText = captcha.createText();
         VerifyInfo verifyInfo = new VerifyInfo();
         verifyInfo.getCaptcha().setCode(capText);
-        redis.set(connectionId, verifyInfo);
+        redis.setCacheObject(connectionId, verifyInfo);
 
         BufferedImage bufferedImage = captcha.createImage(capText);
         ServletOutputStream out = response.getOutputStream();
@@ -130,7 +131,8 @@ public class LoginController {
         if (!StringUtils.hasText(email) || !StringUtils.hasText(connectionId)) return new Result(-20001);
 
         String code;
-        VerifyInfo verifyInformation = redis.getCacheObject(connectionId);
+        JSONObject o = redis.getCacheObject(connectionId);
+        VerifyInfo verifyInformation = o.toJavaObject(VerifyInfo.class);
         if (verifyInformation == null || verifyInformation.getEmail().getCode() == null) {
             VerifyInfo verifyInfo = new VerifyInfo();
             code = CodeUtil.generateVerifyCode();
@@ -140,7 +142,8 @@ public class LoginController {
             verifyInfo.getEmail().setUpdateTime(now);
             redis.setCacheObject(connectionId, verifyInfo);
         } else {
-            VerifyInfo verifyInfo = redis.getCacheObject(connectionId);
+            o = redis.getCacheObject(connectionId);
+            VerifyInfo verifyInfo = o.toJavaObject(VerifyInfo.class);
             code = verifyInfo.getEmail().getCode();
             Long now = login.selectDateFromSQL();
             Long saveTime = verifyInfo.getEmail().getSaveTime();
@@ -221,7 +224,8 @@ public class LoginController {
                 !StringUtils.hasText(verifyCode) ||
                 !StringUtils.hasText(connectionId)) return new Result(-20001);
 
-        VerifyInfo verifyInfo = redis.getCacheObject(connectionId);
+        JSONObject o = redis.getCacheObject(connectionId);
+        VerifyInfo verifyInfo = o.toJavaObject(VerifyInfo.class);
         if (!verifyCode.equals(verifyInfo.getEmail().getCode())) return new Result(-20207);
         if ((verifyInfo.getEmail().getSaveTime()-login.selectDateFromSQL())/1000 > 300) return new Result(-20700);
 
