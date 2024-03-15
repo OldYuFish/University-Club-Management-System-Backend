@@ -8,4 +8,8 @@ import lombok.Data;
 public class VerifyInfo {
     private Captcha captcha;
     private Email email;
+    public VerifyInfo() {
+        this.captcha = new Captcha();
+        this.email = new Email();
+    }
 }

@@ -2,7 +2,10 @@ package com.wust.ucms.controller;
 
 import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.ClubInfo;
+import com.wust.ucms.pojo.RSAKeyProperties;
 import com.wust.ucms.service.impl.ClubInfoServiceImpl;
+import com.wust.ucms.service.impl.LogServiceImpl;
+import com.wust.ucms.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,12 @@ public class ClubController {
 
     @Autowired
     ClubInfoServiceImpl club;
+
+    @Autowired
+    LogServiceImpl log;
+
+    @Autowired
+    RSAKeyProperties rsaKeyProperties;
 
     private static Integer paramsException(ClubInfo clubInfo) {
         try {
@@ -74,7 +83,7 @@ public class ClubController {
     }
 
     @PostMapping("/create")
-    public Result createClub(@RequestBody ClubInfo clubInfo) {
+    public Result createClub(@RequestHeader("Authorization") String token, @RequestBody ClubInfo clubInfo) throws Exception {
         Integer code = paramsException(clubInfo);
         if (code != 0) return new Result(code);
 
@@ -96,11 +105,13 @@ public class ClubController {
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
 
+        log.createLog("社团申请表："+code, "创建", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(0, data);
     }
 
     @PostMapping("/delete")
-    public Result deleteClub(@RequestBody ClubInfo clubInfo) {
+    public Result deleteClub(@RequestHeader("Authorization") String token, @RequestBody ClubInfo clubInfo) throws Exception {
         Integer id = clubInfo.getId();
         try {
             if (id == null || id <= 0 ||
@@ -111,11 +122,14 @@ public class ClubController {
         }
 
         Integer code = club.deleteClubInfo(id);
+
+        log.createLog("社团申请表："+id, "删除", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(code);
     }
 
     @PostMapping("/update")
-    public Result updateClub(@RequestBody ClubInfo clubInfo) {
+    public Result updateClub(@RequestHeader("Authorization") String token, @RequestBody ClubInfo clubInfo) throws Exception {
         Integer code = paramsException(clubInfo);
         if (code != 0) return new Result(code);
 
@@ -140,11 +154,13 @@ public class ClubController {
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
 
+        log.createLog("社团申请表："+code, "修改", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(0, data);
     }
 
     @PostMapping("/approval")
-    public Result approvalClub(@RequestBody ClubInfo clubInfo) {
+    public Result approvalClub(@RequestHeader("Authorization") String token, @RequestBody ClubInfo clubInfo) throws Exception {
         Integer id = clubInfo.getId();
         try {
             if (id == null || id <= 0 ||
@@ -165,6 +181,8 @@ public class ClubController {
         if (code <= 0) return new Result(code);
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
+
+        log.createLog("社团申请表："+code, "审批", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
 
         return new Result(0, data);
     }

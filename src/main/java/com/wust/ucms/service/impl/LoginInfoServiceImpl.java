@@ -195,6 +195,11 @@ public class LoginInfoServiceImpl implements LoginInfoService {
     }
 
     @Override
+    public LoginInfo researchDetailById(Integer loginId) {
+        return login.selectById(loginId);
+    }
+
+    @Override
     public List<LoginInfo> researchLoginInfoByRoleId(Integer roleId) {
         return login.selectLoginInfoByRoleId(roleId);
     }

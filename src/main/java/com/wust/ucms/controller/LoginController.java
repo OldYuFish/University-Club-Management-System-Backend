@@ -5,8 +5,8 @@ import com.google.zxing.WriterException;
 import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.LoginInfo;
 import com.wust.ucms.pojo.RSAKeyProperties;
-import com.wust.ucms.pojo.UserRole;
 import com.wust.ucms.pojo.VerifyInfo;
+import com.wust.ucms.service.impl.LogServiceImpl;
 import com.wust.ucms.service.impl.LoginInfoServiceImpl;
 import com.wust.ucms.utils.*;
 import jakarta.servlet.ServletOutputStream;
@@ -47,6 +47,9 @@ public class LoginController {
 
     @Autowired
     RSAKeyProperties rsaKeyProperties;
+
+    @Autowired
+    LogServiceImpl log;
 
     @PostMapping("/register")
     public Result register(@RequestBody LoginInfo loginInfo) {
@@ -166,10 +169,10 @@ public class LoginController {
     }
 
     @PostMapping("/cid")
-    public Result connectionId(String connectionId) {
+    public Result connectionId(@RequestParam String connectionId) {
         Map<String, Object> data = new HashMap<>();
         if (StringUtils.hasText(connectionId)) {
-            if (!redis.hasKey(connectionId)) {
+            if (redis.hasKey(connectionId) && redis.getCacheObject(connectionId) == null) {
                 return new Result(-20005);
             } else {
                 data.put("connectionId", connectionId);
@@ -184,11 +187,15 @@ public class LoginController {
     }
 
     @PostMapping("/delete")
-    public Result delete(@RequestBody LoginInfo loginInfo) {
+    public Result delete(@RequestHeader("Authorization") String token, @RequestBody LoginInfo loginInfo) throws Exception {
         String email = loginInfo.getEmail();
         if (!StringUtils.hasText(email)) return new Result(-20001);
         loginInfo = login.researchDetail(email);
         Integer code = login.logicalDeleteUser(loginInfo.getId());
+
+        String userNumber = StringUtils.hasText(loginInfo.getStudentNumber()) ? loginInfo.getStudentNumber() : loginInfo.getTeacherNumber();
+
+        log.createLog(userNumber, "注销", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
 
         return new Result(code);
     }
@@ -278,9 +285,15 @@ public class LoginController {
     }
 
     @PostMapping("/update/role")
-    public Result updateRole(@RequestBody LoginInfo loginInfo) {
+    public Result updateRole(@RequestHeader("Authorization") String token, @RequestBody LoginInfo loginInfo) throws Exception {
         if (loginInfo.getId() == null || loginInfo.getRoleId() == null) return new Result(-20001);
         Integer code = login.updateRoleId(loginInfo);
+
+        loginInfo = login.researchDetailById(loginInfo.getId());
+        String userNumber = StringUtils.hasText(loginInfo.getStudentNumber()) ? loginInfo.getStudentNumber() : loginInfo.getTeacherNumber();
+
+        log.createLog(userNumber, "修改用户组", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(code);
     }
 
@@ -340,13 +353,14 @@ public class LoginController {
 
         if (!GoogleAuthenticatorUtil.verification(loginInfo.getSecretKey(), code)) return new Result(-20701);
 
-        String token = JWTUtil.createJWT(loginInfo.getId().toString(), rsaKeyProperties.getPrivateKey());
+        String subject = StringUtils.hasText(loginInfo.getStudentNumber()) ? loginInfo.getStudentNumber() : loginInfo.getTeacherNumber();
+        String token = JWTUtil.createJWT(subject, rsaKeyProperties.getPrivateKey());
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
         data.put("userId", loginInfo.getId());
         data.put("roleId", loginInfo.getRoleId());
 
-        redis.setCacheObject("login:"+loginInfo.getId().toString(), loginInfo);
+        redis.setCacheObject("login:"+subject, loginInfo);
         redis.del(connectionId);
 
         return new Result(0, data);

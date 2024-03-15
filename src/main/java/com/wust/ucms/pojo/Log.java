@@ -19,11 +19,7 @@ public class Log {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date operateTime;
-    private Integer loginId;
-    @TableField(exist = false)
-    private String studentNumber;
-    @TableField(exist = false)
-    private String teacherNumber;
+    private String userNumber;
     @TableField(exist = false)
     private Long pageIndex;
     @TableField(exist = false)

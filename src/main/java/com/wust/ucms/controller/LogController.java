@@ -29,10 +29,8 @@ public class LogController {
 
         try {
             if (log.getObject().length() > 12 ||
-                    log.getOperate().length() > 6 ||
-                    (StringUtils.hasText(log.getStudentNumber()) &&
-                            log.getStudentNumber().length() != 12) ||
-                    log.getTeacherNumber().length() > 24
+                    log.getOperate().length() > 24 ||
+                    log.getUserNumber().length() > 24
             ) throw new Exception("参数格式错误！");
         } catch (Exception e) {
             return new Result(-20002);

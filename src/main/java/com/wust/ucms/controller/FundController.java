@@ -2,7 +2,10 @@ package com.wust.ucms.controller;
 
 import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.FundInfo;
+import com.wust.ucms.pojo.RSAKeyProperties;
 import com.wust.ucms.service.impl.FundInfoServiceImpl;
+import com.wust.ucms.service.impl.LogServiceImpl;
+import com.wust.ucms.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,12 @@ public class FundController {
 
     @Autowired
     FundInfoServiceImpl fund;
+
+    @Autowired
+    LogServiceImpl log;
+
+    @Autowired
+    RSAKeyProperties rsaKeyProperties;
 
     private static Integer paramsException(FundInfo fundInfo) {
         try {
@@ -82,7 +91,7 @@ public class FundController {
     }
 
     @PostMapping("/create")
-    public Result createFund(@RequestBody FundInfo fundInfo) {
+    public Result createFund(@RequestHeader("Authorization") String token, @RequestBody FundInfo fundInfo) throws Exception {
         Integer code = paramsException(fundInfo);
         if (code != 0) return new Result(code);
 
@@ -102,11 +111,13 @@ public class FundController {
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
 
+        log.createLog("经费申请表："+code, "创建", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(0, data);
     }
 
     @PostMapping("/delete")
-    public Result deleteFund(@RequestBody FundInfo fundInfo) {
+    public Result deleteFund(@RequestHeader("Authorization") String token, @RequestBody FundInfo fundInfo) throws Exception {
         Integer id = fundInfo.getId();
         try {
             if (id == null || id <= 0 ||
@@ -117,11 +128,14 @@ public class FundController {
         }
 
         Integer code = fund.deleteFundInfo(id);
+
+        log.createLog("经费申请表："+id, "删除", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(code);
     }
 
     @PostMapping("/update")
-    public Result updateFund(@RequestBody FundInfo fundInfo) {
+    public Result updateFund(@RequestHeader("Authorization") String token, @RequestBody FundInfo fundInfo) throws Exception {
         Integer code = paramsException(fundInfo);
         if (code != 0) return new Result(code);
 
@@ -143,11 +157,13 @@ public class FundController {
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
 
+        log.createLog("经费申请表："+code, "修改", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(0, data);
     }
 
     @PostMapping("/approval")
-    public Result approvalFund(@RequestBody FundInfo fundInfo) {
+    public Result approvalFund(@RequestHeader("Authorization") String token, @RequestBody FundInfo fundInfo) throws Exception {
         Integer id = fundInfo.getId();
         try {
             if (id == null || id <= 0 ||
@@ -168,6 +184,8 @@ public class FundController {
         if (code <= 0) return new Result(code);
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
+
+        log.createLog("经费申请表："+code, "审批", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
 
         return new Result(0, data);
     }

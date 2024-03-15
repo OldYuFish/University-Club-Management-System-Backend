@@ -24,13 +24,13 @@ public class LogServiceImpl implements LogService {
     LoginInfoMapper login;
 
     @Override
-    public Integer createLog(String object, String operate, Integer loginId) {
+    public Integer createLog(String object, String operate, String userNumber) {
         Log log = new Log();
         Date dateTime = logging.selectDateFromSQL();
         log.setOperateTime(dateTime);
         log.setObject(object);
         log.setOperate(operate);
-        log.setLoginId(loginId);
+        log.setUserNumber(userNumber);
         int flag = logging.insert(log);
         if (flag > 0) return 0;
 
@@ -51,13 +51,9 @@ public class LogServiceImpl implements LogService {
                 Log::getOperate,
                 log.getOperate()
         ).eq(
-                StringUtils.hasText(log.getStudentNumber()) && login.selectLoginIdByStudentNumber(log.getStudentNumber()) != null,
-                Log::getLoginId,
-                login.selectLoginIdByStudentNumber(log.getStudentNumber())
-        ).eq(
-                StringUtils.hasText(log.getTeacherNumber()) && login.selectLoginIdByTeacherNumber(log.getTeacherNumber()) != null,
-                Log::getLoginId,
-                login.selectLoginIdByTeacherNumber(log.getTeacherNumber())
+                StringUtils.hasText(log.getUserNumber()),
+                Log::getUserNumber,
+                log.getUserNumber()
         );
 
         IPage<Log> page = new Page<>(log.getPageIndex(), log.getPageSize());
@@ -74,8 +70,7 @@ public class LogServiceImpl implements LogService {
             map.put("object", l.getObject());
             map.put("operate", l.getOperate());
             map.put("operateTime", l.getOperateTime());
-            map.put("studentNumber", login.selectById(l.getLoginId()).getStudentNumber());
-            map.put("teacherNumber", login.selectById(l.getLoginId()).getTeacherNumber());
+            map.put("userNumber",l.getUserNumber());
             logList.add(map);
         }
         Map<String, Object> data = new HashMap<>();

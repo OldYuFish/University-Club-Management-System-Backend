@@ -2,7 +2,10 @@ package com.wust.ucms.controller;
 
 import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.ActivityInfo;
+import com.wust.ucms.pojo.RSAKeyProperties;
 import com.wust.ucms.service.impl.ActivityInfoServiceImpl;
+import com.wust.ucms.service.impl.LogServiceImpl;
+import com.wust.ucms.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,12 @@ public class ActivityController {
 
     @Autowired
     ActivityInfoServiceImpl activity;
+
+    @Autowired
+    LogServiceImpl log;
+
+    @Autowired
+    RSAKeyProperties rsaKeyProperties;
 
     private static Integer paramsException(ActivityInfo activityInfo) {
         try {
@@ -68,7 +77,7 @@ public class ActivityController {
     }
 
     @PostMapping("/create")
-    public Result createActivity(@RequestBody ActivityInfo activityInfo) {
+    public Result createActivity(@RequestHeader("Authorization") String token, @RequestBody ActivityInfo activityInfo) throws Exception {
         Integer code = paramsException(activityInfo);
         if (code != 0) return new Result(code);
 
@@ -91,11 +100,13 @@ public class ActivityController {
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
 
+        log.createLog("活动申请表："+code, "创建", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(0, data);
     }
 
     @PostMapping("/delete")
-    public Result deleteActivity(@RequestBody ActivityInfo activityInfo) {
+    public Result deleteActivity(@RequestHeader("Authorization") String token, @RequestBody ActivityInfo activityInfo) throws Exception {
         Integer id = activityInfo.getId();
         try {
             if (id == null || id <= 0 ||
@@ -106,11 +117,14 @@ public class ActivityController {
         }
 
         Integer code = activity.deleteActivityInfo(id);
+
+        log.createLog("活动申请表："+id, "删除", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(code);
     }
 
     @PostMapping("/update")
-    public Result updateActivity(@RequestBody ActivityInfo activityInfo) {
+    public Result updateActivity(@RequestHeader("Authorization") String token, @RequestBody ActivityInfo activityInfo) throws Exception {
         Integer code = paramsException(activityInfo);
         if (code != 0) return new Result(code);
 
@@ -137,11 +151,13 @@ public class ActivityController {
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
 
+        log.createLog("活动申请表："+code, "修改", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
+
         return new Result(0, data);
     }
 
     @PostMapping("/approval")
-    public Result approvalActivity(@RequestBody ActivityInfo activityInfo) {
+    public Result approvalActivity(@RequestHeader("Authorization") String token, @RequestBody ActivityInfo activityInfo) throws Exception {
         Integer id = activityInfo.getId();
         try {
             if (id == null || id <= 0 ||
@@ -162,6 +178,8 @@ public class ActivityController {
         if (code <= 0) return new Result(code);
         Map<String, Object> data = new HashMap<>();
         data.put("id", code);
+
+        log.createLog("活动申请表："+code, "审批", JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject());
 
         return new Result(0, data);
     }
