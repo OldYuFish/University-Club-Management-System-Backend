@@ -19,7 +19,7 @@ public class ClubInfo {
     private Integer membersNumber;
     private String type;
     private String clubLevel;
-    private String Department;
+    private String department;
     private BigDecimal totalFund;
     private BigDecimal surplusFund;
     private String description;
