@@ -4,11 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.code.kaptcha.Producer;
 import com.google.zxing.WriterException;
 import com.wust.ucms.controller.utils.Result;
-import com.wust.ucms.pojo.LoginInfo;
-import com.wust.ucms.pojo.RSAKeyProperties;
-import com.wust.ucms.pojo.VerifyInfo;
+import com.wust.ucms.pojo.*;
 import com.wust.ucms.service.impl.LogServiceImpl;
 import com.wust.ucms.service.impl.LoginInfoServiceImpl;
+import com.wust.ucms.service.impl.PermissionServiceImpl;
+import com.wust.ucms.service.impl.UserRoleServiceImpl;
 import com.wust.ucms.utils.*;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,10 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -33,6 +30,12 @@ public class LoginController {
 
     @Autowired
     LoginInfoServiceImpl login;
+
+    @Autowired
+    UserRoleServiceImpl role;
+
+    @Autowired
+    PermissionServiceImpl permission;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -406,6 +409,24 @@ public class LoginController {
         }
 
         Map<String, Object> data = login.researchBasic(loginInfo);
+
+        return new Result(0, data);
+    }
+
+    @PostMapping("/is-login")
+    public Result isLogin(@RequestHeader("Authorization") String token) throws Exception {
+        String userNumber = JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject();
+        LoginInfo userInfo = login.researchDetailByUserNumber(userNumber);
+        if (userInfo == null) return new Result(-20203);
+
+        UserRole userRole = role.researchUserRoleById(userInfo.getRoleId());
+        List<Permission> permissionList = permission.researchPermissionOfRole(userInfo.getRoleId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("email", userInfo.getEmail());
+        data.put("userNumber", userNumber);
+        data.put("realName", userInfo.getRealName());
+        data.put("permissionList", permissionList);
+        data.put("role", userRole);
 
         return new Result(0, data);
     }

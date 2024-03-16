@@ -18,6 +18,7 @@ public interface LoginInfoService {
     LoginInfo researchDetail(String email);
     LoginInfo researchDetailByPhone(String phone);
     LoginInfo researchDetailById(Integer loginId);
+    LoginInfo researchDetailByUserNumber(String userNumber);
     List<LoginInfo> researchLoginInfoByRoleId(Integer roleId);
     Map<String, Object> researchBasic(LoginInfo loginInfo);
 }

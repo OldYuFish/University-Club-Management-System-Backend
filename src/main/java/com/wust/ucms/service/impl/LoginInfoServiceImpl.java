@@ -3,6 +3,7 @@ package com.wust.ucms.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.mapper.LoginInfoMapper;
 import com.wust.ucms.mapper.UserRoleMapper;
 import com.wust.ucms.pojo.LoginInfo;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -198,6 +201,11 @@ public class LoginInfoServiceImpl implements LoginInfoService {
     @Override
     public LoginInfo researchDetailById(Integer loginId) {
         return login.selectById(loginId);
+    }
+
+    @Override
+    public LoginInfo researchDetailByUserNumber(String userNumber) {
+        return login.selectLoginInfoByUserNumber(userNumber);
     }
 
     @Override

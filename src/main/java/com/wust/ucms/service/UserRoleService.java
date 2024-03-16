@@ -10,4 +10,5 @@ public interface UserRoleService {
     Integer updateRole(UserRole userRole);
     Map<String, Object> researchRole(UserRole userRole);
     Integer researchRoleIdByRoleName(String roleName);
+    UserRole researchUserRoleById(Integer roleId);
 }

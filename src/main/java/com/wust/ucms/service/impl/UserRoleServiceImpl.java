@@ -87,4 +87,9 @@ public class UserRoleServiceImpl implements UserRoleService {
     public Integer researchRoleIdByRoleName(String roleName) {
         return role.selectRoleIdByRoleName(roleName);
     }
+
+    @Override
+    public UserRole researchUserRoleById(Integer roleId) {
+        return role.selectById(roleId);
+    }
 }

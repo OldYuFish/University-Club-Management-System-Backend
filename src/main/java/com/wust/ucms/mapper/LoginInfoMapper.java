@@ -31,4 +31,7 @@ public interface LoginInfoMapper extends BaseMapper<LoginInfo> {
 
     @Select("select * from login_info where  role_id = #{roleId}")
     List<LoginInfo> selectLoginInfoByRoleId(Integer roleId);
+
+    @Select("select * from login_info where student_number = #{userNumber} or teacher_number = #{userNumber}")
+    LoginInfo selectLoginInfoByUserNumber(String userNumber);
 }
