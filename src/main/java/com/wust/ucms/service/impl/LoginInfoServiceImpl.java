@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -245,7 +246,18 @@ public class LoginInfoServiceImpl implements LoginInfoService {
         pagination.put("pageIndex", loginInfo.getPageIndex());
         pagination.put("pageSize", loginInfo.getPageSize());
 
-        List<LoginInfo> loginList = page.getRecords();
+        List<Map<String, Object>> loginList = new ArrayList<>();
+        for (LoginInfo l : page.getRecords()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("realName", l.getRealName());
+            map.put("studentNumber", l.getStudentNumber());
+            map.put("teacherNumber", l.getTeacherNumber());
+            map.put("phone", l.getPhone());
+            map.put("email", l.getEmail());
+            map.put("isDelete", l.getIsDelete());
+            map.put("roleName", role.selectById(l.getRoleId()).getRoleName());
+            loginList.add(map);
+        }
         Map<String, Object> data = new HashMap<>();
         data.put("loginList", loginList);
         data.put("pagination", pagination);
