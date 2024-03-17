@@ -415,6 +415,7 @@ public class LoginController {
 
     @PostMapping("/is-login")
     public Result isLogin(@RequestHeader("Authorization") String token) throws Exception {
+        if (!StringUtils.hasText(token)) return new Result(-20001);
         String userNumber = JWTUtil.parseJWT(token, rsaKeyProperties.getPublicKey()).getSubject();
         LoginInfo userInfo = login.researchDetailByUserNumber(userNumber);
         if (userInfo == null) return new Result(-20203);
