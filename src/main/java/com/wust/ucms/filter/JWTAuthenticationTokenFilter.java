@@ -42,6 +42,7 @@ public class JWTAuthenticationTokenFilter extends OncePerRequestFilter {
         whiteList.add("/api/user/cid");
         whiteList.add("/api/user/retrieve");
         whiteList.add("/api/user/qrcode");
+        whiteList.add("/api/user/is-login");
 
         String token = request.getHeader("Authorization");
         String apiURI = request.getRequestURI();
