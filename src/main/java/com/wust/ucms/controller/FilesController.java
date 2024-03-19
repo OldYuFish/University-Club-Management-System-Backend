@@ -138,10 +138,36 @@ public class FilesController {
         return new Result(0);
     }
 
-    @PostMapping("/research/club")
-    public Result researchClubFiles(@RequestBody ClubInfo clubInfo) {
+    @PostMapping("/research/club/image")
+    public Result researchClubImage(@RequestBody ClubInfo clubInfo) {
         if (clubInfo.getId() == null) return new Result(-20001);
         List<String> filesList = file.researchFileNameByClubId(clubInfo.getId());
+
+        File location = FileUtil.getURL();
+        for (String fileName : filesList) {
+            File targetFile = new File(location, fileName);
+            String fileType = targetFile.getPath().substring(targetFile.getPath().lastIndexOf(".")+1);
+            if (!"jpg, png".contains(fileType)) filesList.remove(fileName);
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("filesList", filesList);
+
+        return new Result(0, data);
+    }
+
+    @PostMapping("/research/club/file")
+    public Result researchClubFile(@RequestBody ClubInfo clubInfo) {
+        if (clubInfo.getId() == null) return new Result(-20001);
+        List<String> filesList = file.researchFileNameByClubId(clubInfo.getId());
+
+        File location = FileUtil.getURL();
+        for (String fileName : filesList) {
+            File targetFile = new File(location, fileName);
+            String fileType = targetFile.getPath().substring(targetFile.getPath().lastIndexOf(".")+1);
+            if ("jpg, png".contains(fileType)) filesList.remove(fileName);
+        }
+
         Map<String, Object> data = new HashMap<>();
         data.put("filesList", filesList);
 
@@ -181,29 +207,10 @@ public class FilesController {
         if (activityId == null) return new Result(-20001);
         List<String> fileNameList = file.researchFileNameByActivityId(activityId);
         if (fileNameList == null) return new Result(-20000);
+        Map<String, Object> data = new HashMap<>();
+        data.put("filesList", fileNameList);
 
-        response.setDateHeader("Expires", 0);
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-        response.setHeader("Pragma", "no-cache");
-
-        for (String fileName : fileNameList) {
-            File location = FileUtil.getURL();
-            File targetFile = new File(location, fileName);
-            String fileType = targetFile.getPath().substring(targetFile.getPath().lastIndexOf(".")+1);
-            response.setContentType("image/"+fileType);
-
-            ServletOutputStream out = response.getOutputStream();
-            BufferedImage bufferedImage = ImageIO.read(targetFile);
-            ImageIO.write(bufferedImage, fileType, out);
-            try {
-                out.flush();
-            } finally {
-                out.close();
-            }
-        }
-
-        return new Result(0);
+        return new Result(0, data);
     }
 
     @PostMapping("/research/fund")
@@ -214,6 +221,32 @@ public class FilesController {
         data.put("filesList", filesList);
 
         return new Result(0, data);
+    }
+
+    @GetMapping("/picture")
+    public Result picture(HttpServletResponse response, String fileName) throws IOException {
+        if (!StringUtils.hasText(fileName)) return new Result(-20001);
+
+        response.setDateHeader("Expires", 0);
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+        response.setHeader("Pragma", "no-cache");
+
+        File location = FileUtil.getURL();
+        File targetFile = new File(location, fileName);
+        String fileType = targetFile.getPath().substring(targetFile.getPath().lastIndexOf(".")+1);
+        response.setContentType("image/"+fileType);
+
+        ServletOutputStream out = response.getOutputStream();
+        BufferedImage bufferedImage = ImageIO.read(targetFile);
+        ImageIO.write(bufferedImage, fileType, out);
+        try {
+            out.flush();
+        } finally {
+            out.close();
+        }
+
+        return new Result(0);
     }
 
     @GetMapping("/download")
