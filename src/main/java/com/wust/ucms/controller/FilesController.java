@@ -174,6 +174,18 @@ public class FilesController {
         return new Result(0, data);
     }
 
+    @PostMapping("/research/activity")
+    public Result researchActivityFiles(@RequestBody ActivityInfo activityInfo) {
+        Integer activityId = activityInfo.getId();
+        if (activityId == null) return new Result(-20001);
+        List<String> fileNameList = file.researchFileNameByActivityId(activityId);
+        if (fileNameList == null) return new Result(-20000);
+        Map<String, Object> data = new HashMap<>();
+        data.put("filesList", fileNameList);
+
+        return new Result(0, data);
+    }
+
     @GetMapping("/research/member")
     public Result researchMemberFiles(HttpServletResponse response, String studentNumber) throws IOException {
         if (!StringUtils.hasText(studentNumber)) return new Result(-20001);
@@ -200,17 +212,6 @@ public class FilesController {
         }
 
         return new Result(0);
-    }
-
-    @GetMapping("/research/activity")
-    public Result researchActivityFiles(HttpServletResponse response, Integer activityId) throws IOException {
-        if (activityId == null) return new Result(-20001);
-        List<String> fileNameList = file.researchFileNameByActivityId(activityId);
-        if (fileNameList == null) return new Result(-20000);
-        Map<String, Object> data = new HashMap<>();
-        data.put("filesList", fileNameList);
-
-        return new Result(0, data);
     }
 
     @PostMapping("/research/fund")
