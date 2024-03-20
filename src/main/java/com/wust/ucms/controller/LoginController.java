@@ -99,7 +99,7 @@ public class LoginController {
     }
 
     @GetMapping("/captcha")
-    public Result captchaImage(String connectionId, HttpServletResponse response) throws IOException {
+    public Result captchaImage(@RequestParam String connectionId, HttpServletResponse response) throws IOException {
         if (!redis.hasKey(connectionId)) throw new RuntimeException();
 
         response.setDateHeader("Expires", 0);
@@ -175,7 +175,8 @@ public class LoginController {
     }
 
     @PostMapping("/cid")
-    public Result connectionId(@RequestParam String connectionId) {
+    public Result connectionId(@RequestBody LoginInfo loginInfo) {
+        String connectionId = loginInfo.getConnectionId();
         Map<String, Object> data = new HashMap<>();
         if (StringUtils.hasText(connectionId)) {
             if (redis.hasKey(connectionId) && redis.getCacheObject(connectionId) == null) {
