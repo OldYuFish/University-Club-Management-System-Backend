@@ -17,15 +17,15 @@ import java.util.Map;
 
 public class QRCodeUtil {
 
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 300;
+    private static final int WIDTH = 120;
+    private static final int HEIGHT = 120;
     private static final String FILE_FORMAT = "png";
     private static final Map<EncodeHintType, Object> HINTS = new HashMap<EncodeHintType, Object>();
 
     static {
         HINTS.put(EncodeHintType.CHARACTER_SET, "utf-8");
         HINTS.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-        HINTS.put(EncodeHintType.MARGIN, 2);
+        HINTS.put(EncodeHintType.MARGIN, 0);
     }
 
     public static BufferedImage toBufferedImage(String content) throws WriterException {

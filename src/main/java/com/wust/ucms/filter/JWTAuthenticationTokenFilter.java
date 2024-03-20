@@ -37,6 +37,7 @@ public class JWTAuthenticationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         List<String> whiteList = new ArrayList<>();
         whiteList.add("/api/user/register");
+        whiteList.add("/api/user/login");
         whiteList.add("/api/user/captcha");
         whiteList.add("/api/user/verify");
         whiteList.add("/api/user/cid");
