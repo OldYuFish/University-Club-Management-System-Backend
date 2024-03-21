@@ -426,6 +426,7 @@ public class LoginController {
         UserRole userRole = role.researchUserRoleById(userInfo.getRoleId());
         List<Permission> permissionList = permission.researchPermissionOfRole(userInfo.getRoleId());
         Map<String, Object> data = new HashMap<>();
+        data.put("id", userInfo.getId());
         data.put("email", userInfo.getEmail());
         data.put("userNumber", userNumber);
         data.put("realName", userInfo.getRealName());
