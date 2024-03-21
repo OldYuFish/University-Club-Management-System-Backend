@@ -381,6 +381,8 @@ public class LoginController {
 
         loginInfo = login.researchDetail(email);
         if (loginInfo == null) return new Result(-20003);
+        loginInfo.setPassword("");
+        loginInfo.setSecretKey("");
 
         Map<String, Object> data = new HashMap<>();
         data.put("loginInfo", loginInfo);
