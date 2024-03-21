@@ -33,31 +33,37 @@ public class FilesController {
     @PostMapping("/create")
     public Result createFiles(
             @RequestParam MultipartFile multipartFile,
-            @RequestParam Files files,
+            @RequestParam String fileName,
+            @RequestParam Integer id,
+            @RequestParam String type,
             @RequestParam String md5Code) {
         try {
             if (multipartFile == null ||
-                    !StringUtils.hasText(files.getFileName()) ||
-                    md5Code == null || md5Code.isEmpty()
+                    !StringUtils.hasText(fileName) ||
+                    !StringUtils.hasText(md5Code) ||
+                    !StringUtils.hasText(type) ||
+                    id == null
             ) throw new Exception("缺少请求参数！");
         } catch (Exception e) {
             return new Result(-20000);
         }
 
         try {
-            if (files.getFileName().length() > 22) throw new Exception("参数格式错误！");
+            if (fileName.length() > 22) throw new Exception("参数格式错误！");
         } catch (Exception e) {
             return new Result(-20002);
         }
 
+        Files files = new Files();
         try {
-            int count = 0;
-            if (files.getLoginId() != null && files.getLoginId() != 0) count++;
-            if (files.getClubId() != null && files.getClubId() != 0) count++;
-            if (files.getMemberId() != null && files.getMemberId() != 0) count++;
-            if (files.getActivityId() != null && files.getActivityId() != 0) count++;
-            if (files.getFundId() != null && files.getFundId() != 0) count++;
-            if (count != 1) throw new Exception("参数逻辑错误！");
+            switch (type) {
+                case "user" -> files.setLoginId(id);
+                case "club" -> files.setClubId(id);
+                case "member" -> files.setMemberId(id);
+                case "activity" -> files.setActivityId(id);
+                case "fund" -> files.setFundId(id);
+                default -> throw new Exception("参数逻辑错误！");
+            }
         } catch (Exception e) {
             return new Result(-20006);
         }
@@ -74,16 +80,16 @@ public class FilesController {
         String now = String.valueOf(Calendar.getInstance().getTimeInMillis());
 
         File location = FileUtil.getURL();
-        String fileName = name + now + extName;
-        files.setFileName(fileName);
-        File targetFile = new File(location, fileName);
+        String filename = name + now + extName;
+        files.setFileName(filename);
+        File targetFile = new File(location, filename);
 
         Integer flag = file.createFiles(files);
         if (flag == 0) {
             try {
                 file.saveFiles(multipartFile.getInputStream(), targetFile);
                 Map<String, Object> data = new HashMap<>();
-                data.put("fileName", fileName);
+                data.put("fileName", filename);
                 return new Result(0, data);
             } catch (IOException e) {
                 e.printStackTrace();
