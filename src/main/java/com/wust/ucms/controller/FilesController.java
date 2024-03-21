@@ -110,32 +110,17 @@ public class FilesController {
         return new Result(flag);
     }
 
-    @GetMapping("/research/login")
-    public Result researchLoginFiles(HttpServletResponse response, String email) throws IOException {
+    @PostMapping("/research/login")
+    public Result researchLoginFiles(@RequestBody LoginInfo loginInfo) {
+        String email = loginInfo.getEmail();
         if (!StringUtils.hasText(email)) return new Result(-20001);
         String fileName = file.researchFileNameByLoginId(email);
         if (!StringUtils.hasText(fileName)) return new Result(-20000);
 
-        response.setDateHeader("Expires", 0);
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-        response.setHeader("Pragma", "no-cache");
+        Map<String, Object> data = new HashMap<>();
+        data.put("fileName", fileName);
 
-        File location = FileUtil.getURL();
-        File targetFile = new File(location, fileName);
-        String fileType = targetFile.getPath().substring(targetFile.getPath().lastIndexOf(".")+1);
-        response.setContentType("image/"+fileType);
-
-        ServletOutputStream out = response.getOutputStream();
-        BufferedImage bufferedImage = ImageIO.read(targetFile);
-        ImageIO.write(bufferedImage, fileType, out);
-        try {
-            out.flush();
-        } finally {
-            out.close();
-        }
-
-        return new Result(0);
+        return new Result(0, data);
     }
 
     @PostMapping("/research/club/image")
@@ -186,32 +171,17 @@ public class FilesController {
         return new Result(0, data);
     }
 
-    @GetMapping("/research/member")
-    public Result researchMemberFiles(HttpServletResponse response, String studentNumber) throws IOException {
+    @PostMapping("/research/member")
+    public Result researchMemberFiles(@RequestBody LoginInfo loginInfo) {
+        String studentNumber = loginInfo.getStudentNumber();
         if (!StringUtils.hasText(studentNumber)) return new Result(-20001);
         String fileName = file.researchFileNameByMemberId(studentNumber);
         if (!StringUtils.hasText(fileName)) return new Result(-20000);
 
-        response.setDateHeader("Expires", 0);
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-        response.setHeader("Pragma", "no-cache");
+        Map<String, Object> data = new HashMap<>();
+        data.put("fileName", fileName);
 
-        File location = FileUtil.getURL();
-        File targetFile = new File(location, fileName);
-        String fileType = targetFile.getPath().substring(targetFile.getPath().lastIndexOf(".")+1);
-        response.setContentType("image/"+fileType);
-
-        ServletOutputStream out = response.getOutputStream();
-        BufferedImage bufferedImage = ImageIO.read(targetFile);
-        ImageIO.write(bufferedImage, fileType, out);
-        try {
-            out.flush();
-        } finally {
-            out.close();
-        }
-
-        return new Result(0);
+        return new Result(0, data);
     }
 
     @PostMapping("/research/fund")
