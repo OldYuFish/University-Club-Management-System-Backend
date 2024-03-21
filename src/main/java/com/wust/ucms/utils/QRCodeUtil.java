@@ -17,8 +17,8 @@ import java.util.Map;
 
 public class QRCodeUtil {
 
-    private static final int WIDTH = 120;
-    private static final int HEIGHT = 120;
+    private static final int WIDTH = 140;
+    private static final int HEIGHT = 140;
     private static final String FILE_FORMAT = "png";
     private static final Map<EncodeHintType, Object> HINTS = new HashMap<EncodeHintType, Object>();
 
