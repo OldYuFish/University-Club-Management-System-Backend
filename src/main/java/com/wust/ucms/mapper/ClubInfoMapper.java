@@ -18,4 +18,10 @@ public interface ClubInfoMapper extends BaseMapper<ClubInfo> {
 
     @Select("select id from club_info where login_id = #{loginId}")
     Integer selectClubIdByLoginId(Integer loginId);
+
+    @Select("select count(*) from club_info where type = #{type}")
+    Integer selectCountByType(String type);
+
+    @Select("select count(*) from club_info")
+    Integer selectCount();
 }

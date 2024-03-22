@@ -11,4 +11,5 @@ public interface ClubInfoService {
     ClubInfo researchDetailClubInfo(Integer clubId);
     Map<String, Object> researchBasicClubInfo(ClubInfo clubInfo);
     Integer researchClubIdByClubName(String clubName);
+    Map<String, Object> researchCount();
 }

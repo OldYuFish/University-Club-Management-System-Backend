@@ -154,4 +154,19 @@ public class ClubInfoServiceImpl implements ClubInfoService {
     public Integer researchClubIdByClubName(String clubName) {
         return club.selectClubIdByClubName(clubName);
     }
+
+    @Override
+    public Map<String, Object> researchCount() {
+        Map<String, Object> data = new HashMap<>();
+        Integer science = club.selectCountByType("科技");
+        Integer culture = club.selectCountByType("文体");
+        Integer society = club.selectCountByType("社工");
+        Integer others = club.selectCount()-science-culture-society;
+        data.put("science", science);
+        data.put("culture", culture);
+        data.put("society", society);
+        data.put("others", others);
+
+        return data;
+    }
 }

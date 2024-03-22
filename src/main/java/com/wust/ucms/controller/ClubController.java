@@ -248,4 +248,11 @@ public class ClubController {
 
         return new Result(0, data);
     }
+
+    @PostMapping("/count")
+    public Result count() {
+        Map<String, Object> data = club.researchCount();
+
+        return new Result(0, data);
+    }
 }
