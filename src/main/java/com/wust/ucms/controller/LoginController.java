@@ -132,6 +132,7 @@ public class LoginController {
         String email = loginInfo.getEmail();
         String connectionId = loginInfo.getConnectionId();
         if (!StringUtils.hasText(email) || !StringUtils.hasText(connectionId)) return new Result(-20001);
+        if (login.researchDetail(email) == null) return new Result(-20206);
 
         String code;
         JSONObject o = redis.getCacheObject(connectionId);
