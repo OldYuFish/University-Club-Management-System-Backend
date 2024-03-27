@@ -4,6 +4,7 @@ import com.wust.ucms.controller.utils.Result;
 import com.wust.ucms.pojo.ActivityInfo;
 import com.wust.ucms.pojo.RSAKeyProperties;
 import com.wust.ucms.service.impl.ActivityInfoServiceImpl;
+import com.wust.ucms.service.impl.ClubInfoServiceImpl;
 import com.wust.ucms.service.impl.LogServiceImpl;
 import com.wust.ucms.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class ActivityController {
     LogServiceImpl log;
 
     @Autowired
+    ClubInfoServiceImpl club;
+
+    @Autowired
     RSAKeyProperties rsaKeyProperties;
 
     private static Integer paramsException(ActivityInfo activityInfo) {
@@ -32,10 +36,10 @@ public class ActivityController {
             if (!StringUtils.hasText(activityInfo.getTitle()) ||
                     !StringUtils.hasText(activityInfo.getType()) ||
                     !StringUtils.hasText(activityInfo.getAddress()) ||
+                    !StringUtils.hasText(activityInfo.getClubName()) ||
                     activityInfo.getActivityStartTime() == null ||
                     activityInfo.getActivityEndTime() == null ||
-                    activityInfo.getStatusCode() == null ||
-                    activityInfo.getClubId() == null
+                    activityInfo.getStatusCode() == null
             ) throw new Exception("缺少参数！");
         } catch (Exception e) {
             return -20001;
@@ -44,7 +48,8 @@ public class ActivityController {
         try {
             if (activityInfo.getTitle().length() > 36 ||
                     activityInfo.getType().length() > 12 ||
-                    activityInfo.getAddress().length() > 36
+                    activityInfo.getAddress().length() > 36 ||
+                    activityInfo.getClubName().length() > 24
             ) throw new Exception("参数格式错误！");
         } catch (Exception e) {
             return -20002;
@@ -94,6 +99,10 @@ public class ActivityController {
         } catch (Exception e) {
             return new Result(-20006);
         }
+
+        Integer clubId = club.researchClubIdByClubName(activityInfo.getClubName());
+        if (clubId == null) return new Result(-20212);
+        activityInfo.setClubId(clubId);
 
         code = activity.createActivityInfo(activityInfo);
         if (code <= 0) return new Result(code);

@@ -45,6 +45,7 @@ public class Result {
             case -20209 -> this.message = "The user role does not exist";
             case -20210 -> this.message = "The role name has been used";
             case -20211 -> this.message = "The user has been locked out due to too many wrong passwords";
+            case -20212 -> this.message = "The club does not exist";
             case -20301 -> this.message = "Application form cannot be modified";
             case -20302 -> this.message = "Application form is missing attachments";
             case -20303 -> this.message = "This application form does not belong to this user";
@@ -95,6 +96,7 @@ public class Result {
             case -20208 -> this.message = "The user is already the president of another club";
             case -20209 -> this.message = "The user role does not exist";
             case -20211 -> this.message = "The user has been locked out due to too many wrong passwords";
+            case -20212 -> this.message = "The club does not exist";
             case -20300 -> this.message = "Users have no application form related records in the current batch";
             case -20301 -> this.message = "User has submitted two application forms in the current batch";
             case -20302 -> this.message = "The user has not saved the application form in the current batch";
