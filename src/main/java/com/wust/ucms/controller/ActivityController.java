@@ -155,6 +155,10 @@ public class ActivityController {
             return new Result(-20006);
         }
 
+        Integer clubId = club.researchClubIdByClubName(activityInfo.getClubName());
+        if (clubId == null) return new Result(-20212);
+        activityInfo.setClubId(clubId);
+
         code = activity.updateActivityInfo(activityInfo);
         if (code <= 0) return new Result(code);
         Map<String, Object> data = new HashMap<>();
